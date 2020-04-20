@@ -1,5 +1,5 @@
 {
-  "name": "lcth",
+  "name": "lcth-backend",
   "version": "1.0.0",
   "description": "league of legent custom tournament's history application",
   "main": "index.js",
@@ -7,5 +7,19 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "seosd",
-  "license": "ISC"
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.17.1"
+  },
+  "devDependencies": {
+    "eslint": "^6.8.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/seosd97/LCTH.git"
+  },
+  "bugs": {
+    "url": "https://github.com/seosd97/LCTH/issues"
+  },
+  "homepage": "https://github.com/seosd97/LCTH#readme"
 }

@@ -1,0 +1,1 @@
+const endpoint = "https://kr.api.riotgames.com/lol/";
