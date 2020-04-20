@@ -1,0 +1,11 @@
+{
+  "name": "lcth",
+  "version": "1.0.0",
+  "description": "league of legent custom tournament's history application",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "seosd",
+  "license": "ISC"
+}
