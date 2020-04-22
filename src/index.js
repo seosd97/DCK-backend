@@ -16,14 +16,14 @@ app.get('/', (req, res) => {
     });
 });
 
+db.sync({ alter: true })
+    .then(() => {
+        console.log('db synchronize finished');
+    })
+    .catch(err => {
+        console.log(err);
+    });
+
 app.listen(port, () => {
     console.log(`express listening at port ${port}`);
-
-    db.sync()
-        .then(() => {
-            console.log('db connect success');
-        })
-        .catch(err => {
-            console.log(err);
-        });
 });
