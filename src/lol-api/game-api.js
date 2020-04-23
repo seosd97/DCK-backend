@@ -1,6 +1,6 @@
 const req = require('request');
 const endpoint = 'https://kr.api.riotgames.com/lol/';
-const key = 'RGAPI-cf6af816-5b6d-47f1-a4bc-3b3d99137bde';
+const key = 'RGAPI-77e6f06b-65f9-4fcb-941e-1795e09f6a15';
 
 const riotReq = req.defaults({
     headers: {
