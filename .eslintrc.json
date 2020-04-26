@@ -29,7 +29,7 @@
             "error",
             "always"
         ],
-        "no-unused-vars": "warn",
+        "no-unused-vars": "off",
         "arrow-spacing": [
             "warn",
             {
