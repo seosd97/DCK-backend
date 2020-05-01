@@ -2,7 +2,7 @@ const req = require('request');
 const endpoint = 'http://ddragon.leagueoflegends.com/cdn/';
 const lang = 'ko_KR';
 const gameVersion = '10.8.1';
-const key = 'RGAPI-13d08808-2bbf-497a-b54c-0d9b65db149c';
+const key = process.env.API_KEY;
 
 const riotReq = req.defaults({
     headers: {

@@ -2,7 +2,9 @@
 
 const express = require('express');
 const router = express.Router();
-const game_api = require('./../lol-api/game-api');
+const game_api = require('../lol-api/game-api');
+const ctrl_tournament = require('../controllers/tournaments_controller');
+const ctrl_champion = require('../controllers/champions_controller');
 
 router.get('/', (req, res) => {
     game_api.getMatchData(4036701994, (err, data) => {
@@ -31,6 +33,7 @@ router.get('/team/:name/summoners');
 
 // tournament
 router.post('/tournaments');
+router.get('/tournaments', ctrl_tournament.getTournaments);
 router.get('/tournament/register');
 router.get('/tournament/:id');
 router.get('/tournament/:id/matches');
@@ -41,7 +44,12 @@ router.get('/matches');
 router.get('/match/:id');
 
 // history
-router.get('history/team/:team_name');
-router.get('history/:summoner_name');
+router.get('/history/team/:team_name');
+router.get('/history/:summoner_name');
+
+// champion
+router.get('/champions', ctrl_champion.getAllChampions);
+router.get('/champion/:id', ctrl_champion.getChampionById);
+router.get('/champion/:name');
 
 module.exports = router;
