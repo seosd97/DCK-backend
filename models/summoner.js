@@ -5,20 +5,14 @@ module.exports = (sequelize, DataTypes) => {
         {
             uuid: DataTypes.STRING,
             account_id: DataTypes.STRING,
-            name: DataTypes.STRING,
-            tier: DataTypes.STRING
+            name: DataTypes.STRING
         },
         {}
     );
     Summoner.associate = function(models) {
-        Summoner.hasMany(models.SummonerHistory);
+        Summoner.hasOne(models.SummonerHistory);
         Summoner.belongsToMany(models.Match, { through: 'MatchSummoners' });
-        Summoner.belongsTo(models.Team, {
-            onDelete: 'CASCADE',
-            foreignKey: {
-                allowNull: false
-            }
-        });
+        Summoner.belongsToMany(models.Team, { through: 'SummonerTeams' });
     };
     return Summoner;
 };
