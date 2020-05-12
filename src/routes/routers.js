@@ -34,7 +34,6 @@ router.get('/team/:name/summoners');
 // tournament
 router.post('/tournaments');
 router.get('/tournaments', ctrl_tournament.getTournaments);
-router.get('/tournament/register');
 router.get('/tournament/:id');
 router.get('/tournament/:id/matches');
 router.get('/tournament/:group_id/match/:match_id');
@@ -51,5 +50,11 @@ router.get('/history/:summoner_name');
 router.get('/champions', ctrl_champion.getAllChampions);
 router.get('/champion/:id', ctrl_champion.getChampionById);
 router.get('/champion/:name');
+
+// register
+router.post('/register/tournament');
+router.post('/register/match');
+router.post('/register/team');
+router.post('/register/summoner');
 
 module.exports = router;
