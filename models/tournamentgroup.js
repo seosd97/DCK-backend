@@ -18,5 +18,6 @@ module.exports = (sequelize, DataTypes) => {
         TournamentGroup.hasMany(models.Match);
         TournamentGroup.hasMany(models.Team);
     };
+
     return TournamentGroup;
 };

@@ -7,21 +7,21 @@ module.exports = {
             [
                 {
                     id: 1,
-                    name: 'dck season 1',
+                    name: 'DCK Season 1',
                     sid: 1,
                     createdAt: new Date(),
                     updatedAt: new Date()
                 },
                 {
                     id: 2,
-                    name: 'dck season 2',
+                    name: 'DCK Season 2',
                     sid: 2,
                     createdAt: new Date(),
                     updatedAt: new Date()
                 },
                 {
                     id: 3,
-                    name: 'dck season 3',
+                    name: 'DCK Season 3',
                     sid: 3,
                     createdAt: new Date(),
                     updatedAt: new Date()

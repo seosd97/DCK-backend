@@ -16,5 +16,6 @@ module.exports = (sequelize, DataTypes) => {
             onDelete: 'SET NULL'
         });
     };
+
     return BanHistory;
 };

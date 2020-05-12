@@ -4,7 +4,8 @@ module.exports = (sequelize, DataTypes) => {
         'TeamHistory',
         {
             camp_id: DataTypes.INTEGER,
-            win: DataTypes.BOOLEAN
+            win: DataTypes.BOOLEAN,
+            match_id: DataTypes.BIGINT
         },
         {}
     );
@@ -16,5 +17,6 @@ module.exports = (sequelize, DataTypes) => {
             }
         });
     };
+
     return TeamHistory;
 };

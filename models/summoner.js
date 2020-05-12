@@ -14,5 +14,6 @@ module.exports = (sequelize, DataTypes) => {
         Summoner.belongsToMany(models.Match, { through: 'MatchSummoners' });
         Summoner.belongsToMany(models.Team, { through: 'SummonerTeams' });
     };
+
     return Summoner;
 };

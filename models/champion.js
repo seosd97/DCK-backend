@@ -15,5 +15,6 @@ module.exports = (sequelize, DataTypes) => {
     Champion.associate = function(models) {
         // associations can be defined here
     };
+
     return Champion;
 };

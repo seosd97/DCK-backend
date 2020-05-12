@@ -6,7 +6,7 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING,
             gid: DataTypes.BIGINT,
             duration: DataTypes.INTEGER,
-            creation_time: DataTypes.BIGINT
+            round: DataTypes.INTEGER
         },
         {}
     );
@@ -21,5 +21,6 @@ module.exports = (sequelize, DataTypes) => {
             }
         });
     };
+
     return Match;
 };

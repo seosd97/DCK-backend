@@ -13,7 +13,8 @@ module.exports = (sequelize, DataTypes) => {
             champion_level: DataTypes.INTEGER,
             role: DataTypes.STRING,
             win: DataTypes.BOOLEAN,
-            camp_id: DataTypes.INTEGER
+            camp_id: DataTypes.INTEGER,
+            match_id: DataTypes.BIGINT
         },
         {}
     );
@@ -25,5 +26,6 @@ module.exports = (sequelize, DataTypes) => {
             }
         });
     };
+
     return SummonerHistory;
 };
