@@ -41,6 +41,7 @@ router.get('/tournament/:group_id/match/:match_id');
 // match
 router.get('/matches');
 router.get('/match/:id');
+router.get('/riotapi/match/:id', game_api.getMatchDataFromAPI);
 
 // history
 router.get('/history/team/:team_name');

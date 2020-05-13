@@ -16,6 +16,13 @@ exports.getMatchData = id => {
         });
 };
 
+exports.getMatchDataFromAPI = async (req, res) => {
+    const id = req.params.id;
+    const data = await this.getMatchData(id);
+
+    res.json(data);
+};
+
 exports.getSummonerByName = name => {
     return req
         .get(endpoint + `summoner/v4/summoners/by-name/${encodeURI(name)}`, {
