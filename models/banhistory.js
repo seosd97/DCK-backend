@@ -4,16 +4,25 @@ module.exports = (sequelize, DataTypes) => {
         'BanHistory',
         {
             cid: DataTypes.INTEGER,
-            turn: DataTypes.INTEGER
+            turn: DataTypes.INTEGER,
+            GameId: {
+                type: DataTypes.BIGINT,
+                allowNull: false,
+                references: {
+                    model: sequelize.Match,
+                    key: 'gid'
+                }
+            }
         },
         {}
     );
     BanHistory.associate = function(models) {
         BanHistory.belongsTo(models.Team, {
-            onDelete: 'SET NULL'
+            onDelete: 'CASCADE'
         });
         BanHistory.belongsTo(models.Match, {
-            onDelete: 'SET NULL'
+            onDelete: 'CASCADE',
+            foreignKey: 'GameId'
         });
     };
 

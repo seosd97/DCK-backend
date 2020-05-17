@@ -4,7 +4,7 @@ module.exports = (sequelize, DataTypes) => {
         'Match',
         {
             type: DataTypes.STRING,
-            gid: DataTypes.BIGINT,
+            gid: { type: DataTypes.BIGINT, defaultValue: 0 },
             duration: DataTypes.INTEGER,
             round: DataTypes.INTEGER
         },

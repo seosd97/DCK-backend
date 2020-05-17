@@ -5,7 +5,12 @@ module.exports = (sequelize, DataTypes) => {
         {
             camp_id: DataTypes.INTEGER,
             win: DataTypes.BOOLEAN,
-            match_id: DataTypes.BIGINT
+            match_id: DataTypes.BIGINT,
+            towerKills: DataTypes.INTEGER,
+            inhibitorKills: DataTypes.INTEGER,
+            dragonKills: DataTypes.INTEGER,
+            riftHeraldKills: DataTypes.INTEGER,
+            baronKills: DataTypes.INTEGER
         },
         {}
     );
