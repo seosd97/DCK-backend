@@ -43,6 +43,13 @@ module.exports = (sequelize, DataTypes) => {
                 allowNull: false
             }
         });
+
+        SummonerHistory.belongsTo(models.Match, {
+            onDelete: 'CASCADE',
+            foreignKey: {
+                allowNull: false
+            }
+        });
     };
 
     return SummonerHistory;

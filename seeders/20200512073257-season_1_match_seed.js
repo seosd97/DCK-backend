@@ -1,6 +1,6 @@
 'use strict';
 const game_api = require('../src/lol-api/game-api');
-const { Team } = require('../models');
+const { Team, Match } = require('../models');
 
 const matchDatas = [
     { id: 4036672778, type: 'groupstage', round: 1, blue: '석진팀', red: '수빈팀' },
@@ -11,7 +11,7 @@ const matchDatas = [
     { id: 4036833732, type: 'groupstage', round: 6, blue: '석진팀', red: '승덕팀' },
     { id: 4037816055, type: 'semifinal', round: 1, blue: '승덕팀', red: '진희팀' },
     { id: 4038026338, type: 'semifinal', round: 2, blue: '승덕팀', red: '진희팀' },
-    { id: 4037847887, type: 'semifinal', round: 3, blud: '승덕팀', red: '진희팀' },
+    { id: 4037847887, type: 'semifinal', round: 3, blue: '승덕팀', red: '진희팀' },
     { id: 4038028605, type: 'semifinal', round: 4, blue: '진희팀', red: '승덕팀' },
     { id: 4040761459, type: 'final', round: 1, blue: '석진팀', red: '승덕팀' },
     { id: 4040573475, type: 'final', round: 2, blue: '석진팀', red: '승덕팀' },
@@ -22,7 +22,7 @@ const matchDatas = [
 
 module.exports = {
     up: async (queryInterface, Sequelize) => {
-        const matchDTOs = [];
+        //const matchDTOs = [];
         const banDTOs = [];
         const teamDTOs = [];
         const summonerDTOs = [];
@@ -31,26 +31,38 @@ module.exports = {
             const res = await game_api.getMatchData(matchData.id);
             const data = JSON.parse(res);
 
-            const matchRecord = {
-                type: matchData.type,
-                gid: data.gameId,
-                duration: data.gameDuration,
-                round: matchData.round,
-                TournamentGroupId: 1,
-                createdAt: new Date(),
-                updatedAt: new Date()
-            };
-            matchDTOs.push(matchRecord);
+            await queryInterface.bulkInsert(
+                'Matches',
+                [
+                    {
+                        type: matchData.type,
+                        gid: data.gameId,
+                        duration: data.gameDuration,
+                        round: matchData.round,
+                        TournamentGroupId: 1,
+                        createdAt: new Date(),
+                        updatedAt: new Date()
+                    }
+                ],
+                {}
+            );
+
+            const matchDTO = await Match.findOne({
+                where: {
+                    gid: data.gameId
+                }
+            });
 
             for (let t in data.teams) {
                 const dto = data.teams[t];
                 const teamName = dto.teamId == 100 ? matchData.blue : matchData.red;
+                console.log(teamName);
                 const teamData = await Team.findOne({ where: { name: teamName } });
                 const teamRecord = {
                     TeamId: teamData.id,
                     camp_id: dto.teamId,
                     win: dto.win == 'Win',
-                    match_id: data.gameId,
+                    MatchId: matchDTO.id,
                     towerKills: dto.towerKills,
                     inhibitorKills: dto.inhibitorKills,
                     dragonKills: dto.dragonKills,
@@ -64,7 +76,7 @@ module.exports = {
                     const banData = dto.bans[b];
                     const banRecord = {
                         TeamId: teamData.id,
-                        GameId: data.gameId,
+                        MatchId: matchDTO.id,
                         cid: banData.championId,
                         turn: banData.pickTurn,
                         createdAt: new Date(),
@@ -81,6 +93,7 @@ module.exports = {
                 const dto = data.participants[s];
                 const summonerRecord = {
                     SummonerId: 121,
+                    MatchId: matchDTO.id,
                     cid: dto.championId,
                     spell1_id: dto.spell1Id,
                     spell2_id: dto.spell2Id,
@@ -92,23 +105,24 @@ module.exports = {
                     role: 'NONE',
                     camp_id: dto.teamId,
                     match_id: data.gameId,
-                    item0: dto.item0,
-                    item1: dto.item1,
-                    item2: dto.item2,
-                    item3: dto.item3,
-                    item4: dto.item4,
-                    item5: dto.item5,
-                    doubleKills: dto.doubleKills,
-                    tripleKills: dto.tripleKills,
-                    quadraKills: dto.quadraKills,
-                    pentaKills: dto.pentaKills,
-                    unrealKills: dto.unrealKills,
-                    goldEarned: dto.goldEarned,
-                    totalMinionsKilled: dto.totalMinionsKilled,
-                    wardsPlaced: dto.wardsPlaced,
-                    wardsKilled: dto.wardsKilled,
-                    perkPrimaryStyle: dto.perkPrimaryStyle,
-                    perkSubStyle: dto.perkSubStyle,
+                    win: dto.stats.win,
+                    item0: dto.stats.item0,
+                    item1: dto.stats.item1,
+                    item2: dto.stats.item2,
+                    item3: dto.stats.item3,
+                    item4: dto.stats.item4,
+                    item5: dto.stats.item5,
+                    doubleKills: dto.stats.doubleKills,
+                    tripleKills: dto.stats.tripleKills,
+                    quadraKills: dto.stats.quadraKills,
+                    pentaKills: dto.stats.pentaKills,
+                    unrealKills: dto.stats.unrealKills,
+                    goldEarned: dto.stats.goldEarned,
+                    totalMinionsKilled: dto.stats.totalMinionsKilled,
+                    wardsPlaced: dto.stats.wardsPlaced,
+                    wardsKilled: dto.stats.wardsKilled,
+                    perkPrimaryStyle: dto.stats.perkPrimaryStyle,
+                    perkSubStyle: dto.stats.perkSubStyle,
                     participantId: dto.participantId,
                     createdAt: new Date(),
                     updatedAt: new Date()
@@ -117,18 +131,20 @@ module.exports = {
                 summonerDTOs.push(summonerRecord);
             }
         }
+
         return Promise.all([
-            queryInterface.bulkInsert('Matches', matchDTOs, {}),
             queryInterface.bulkInsert('TeamHistories', teamDTOs, {}),
             queryInterface.bulkInsert('BanHistories', banDTOs, {}),
-            queryInterface.bulkInsert('SummonerHistoris', summonerDTOs, {})
+            queryInterface.bulkInsert('SummonerHistories', summonerDTOs, {})
         ]);
     },
 
     down: (queryInterface, Sequelize) => {
-        queryInterface.bulkDelete('Matches', null, {}),
-        queryInterface.bulkDelete('TeamHistories', null, {}),
-        queryInterface.bulkDelete('BanHistories', null, {}),
-        queryInterface.bulkDelete('SummonerHistoris', null, {});
+        return Promise.all([
+            queryInterface.bulkDelete('Matches', null, {}),
+            queryInterface.bulkDelete('TeamHistories', null, {}),
+            queryInterface.bulkDelete('BanHistories', null, {}),
+            queryInterface.bulkDelete('SummonerHistories', null, {})
+        ]);
     }
 };

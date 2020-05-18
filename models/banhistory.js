@@ -4,15 +4,15 @@ module.exports = (sequelize, DataTypes) => {
         'BanHistory',
         {
             cid: DataTypes.INTEGER,
-            turn: DataTypes.INTEGER,
-            GameId: {
-                type: DataTypes.BIGINT,
-                allowNull: false,
-                references: {
-                    model: sequelize.Match,
-                    key: 'gid'
-                }
-            }
+            turn: DataTypes.INTEGER
+            // GameId: {
+            //     type: DataTypes.BIGINT,
+            //     allowNull: false,
+            //     references: {
+            //         model: sequelize.Match,
+            //         key: 'gid'
+            //     }
+            // }
         },
         {}
     );
@@ -21,8 +21,8 @@ module.exports = (sequelize, DataTypes) => {
             onDelete: 'CASCADE'
         });
         BanHistory.belongsTo(models.Match, {
-            onDelete: 'CASCADE',
-            foreignKey: 'GameId'
+            onDelete: 'CASCADE'
+            // foreignKey: 'GameId'
         });
     };
 

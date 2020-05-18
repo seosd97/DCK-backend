@@ -11,9 +11,13 @@ module.exports = (sequelize, DataTypes) => {
         {}
     );
     Match.associate = function(models) {
+        // Match.hasMany(models.BanHistory, {
+        //     foreignKey: 'GameId',
+        //     sourceKey: 'gid'
+        // });
         Match.hasMany(models.BanHistory);
-        Match.belongsToMany(models.Team, { through: 'MatchTeams' });
-        Match.belongsToMany(models.Summoner, { through: 'MatchSummoners' });
+        Match.hasMany(models.TeamHistory);
+        Match.hasMany(models.SummonerHistory);
         Match.belongsTo(models.TournamentGroup, {
             onDelete: 'CASCADE',
             foreignKey: {

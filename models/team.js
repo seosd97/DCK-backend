@@ -8,10 +8,9 @@ module.exports = (sequelize, DataTypes) => {
         {}
     );
     Team.associate = function(models) {
-        Team.hasOne(models.TeamHistory);
+        Team.hasMany(models.TeamHistory);
         Team.hasMany(models.BanHistory);
         Team.belongsToMany(models.Summoner, { through: 'SummonerTeams' });
-        Team.belongsToMany(models.Match, { through: 'MatchTeams' });
         Team.belongsTo(models.TournamentGroup, {
             onDelete: 'CASCADE',
             foreignKey: {

@@ -5,6 +5,7 @@ const router = express.Router();
 const game_api = require('../lol-api/game-api');
 const ctrl_tournament = require('../controllers/tournaments_controller');
 const ctrl_champion = require('../controllers/champions_controller');
+const ctrl_match = require('../controllers/matches_controller');
 
 router.get('/', (req, res) => {
     game_api.getMatchData(4036701994, (err, data) => {
@@ -40,7 +41,7 @@ router.get('/tournament/:group_id/match/:match_id');
 
 // match
 router.get('/matches');
-router.get('/match/:id');
+router.get('/match/:id', ctrl_match.getMatchByGameId);
 router.get('/riotapi/match/:id', game_api.getMatchDataFromAPI);
 
 // history

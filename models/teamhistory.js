@@ -5,7 +5,6 @@ module.exports = (sequelize, DataTypes) => {
         {
             camp_id: DataTypes.INTEGER,
             win: DataTypes.BOOLEAN,
-            match_id: DataTypes.BIGINT,
             towerKills: DataTypes.INTEGER,
             inhibitorKills: DataTypes.INTEGER,
             dragonKills: DataTypes.INTEGER,
@@ -16,6 +15,13 @@ module.exports = (sequelize, DataTypes) => {
     );
     TeamHistory.associate = function(models) {
         TeamHistory.belongsTo(models.Team, {
+            onDelete: 'CASCADE',
+            foreignKey: {
+                allowNull: false
+            }
+        });
+
+        TeamHistory.belongsTo(models.Match, {
             onDelete: 'CASCADE',
             foreignKey: {
                 allowNull: false

@@ -10,8 +10,7 @@ module.exports = (sequelize, DataTypes) => {
         {}
     );
     Summoner.associate = function(models) {
-        Summoner.hasOne(models.SummonerHistory);
-        Summoner.belongsToMany(models.Match, { through: 'MatchSummoners' });
+        Summoner.hasMany(models.SummonerHistory);
         Summoner.belongsToMany(models.Team, { through: 'SummonerTeams' });
     };
 
