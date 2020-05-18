@@ -1,5 +1,16 @@
 const { Match, Team, Summoner, TeamHistory, BanHistory, SummonerHistory } = require('../../models');
 
+exports.getAllMatches = async (req, res) => {
+    const payload = [];
+    const matches = await Match.findAll();
+    for (let i in matches) {
+        const data = await makeMatchData(matches[i]);
+        payload.push(data);
+    }
+
+    res.json(payload);
+};
+
 exports.getMatchById = async (req, res) => {
     const matchId = parseInt(req.params.id, 10);
     const matchData = await Match.findOne({

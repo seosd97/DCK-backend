@@ -6,6 +6,8 @@ const game_api = require('../lol-api/game-api');
 const ctrl_tournament = require('../controllers/tournaments_controller');
 const ctrl_champion = require('../controllers/champions_controller');
 const ctrl_match = require('../controllers/matches_controller');
+const ctrl_team = require('../controllers/teams_controller');
+const ctrl_summoner = require('../controllers/summoners_controller');
 
 router.get('/', (req, res) => {
     game_api.getMatchData(4036701994, (err, data) => {
@@ -19,18 +21,18 @@ router.get('/', (req, res) => {
 });
 
 // summoner
-router.get('/summoners');
+router.get('/summoners', ctrl_summoner.getAllSummoners);
 router.post('/summoners');
 router.get('/summoner/register');
-router.get('/summoner/:name');
+router.get('/summoner/:name', ctrl_summoner.getSummonerByName);
 
 // team
-router.get('/teams');
+router.get('/teams', ctrl_team.getAllTeams);
 router.post('/teams');
-router.get('/teams/:group_id');
+router.get('/teams/:group_id', ctrl_team.getTeamByGroupId);
+router.get('/team/:name', ctrl_team.getTeamByName);
+router.get('/team/:name/summoners', ctrl_team.getSummonersOfTeam);
 router.get('/team/register');
-router.get('/team/:name');
-router.get('/team/:name/summoners');
 
 // tournament
 router.post('/tournaments');
@@ -40,7 +42,7 @@ router.get('/tournament/:id/matches');
 router.get('/tournament/:group_id/match/:match_id');
 
 // match
-router.get('/matches');
+router.get('/matches', ctrl_match.getAllMatches);
 router.get('/match/:id', ctrl_match.getMatchByGameId);
 router.get('/riotapi/match/:id', game_api.getMatchDataFromAPI);
 
@@ -51,7 +53,7 @@ router.get('/history/:summoner_name');
 // champion
 router.get('/champions', ctrl_champion.getAllChampions);
 router.get('/champion/:id', ctrl_champion.getChampionById);
-router.get('/champion/:name');
+router.get('/champion/:name', ctrl_champion.getChampionByName);
 
 // register
 router.post('/register/tournament');
