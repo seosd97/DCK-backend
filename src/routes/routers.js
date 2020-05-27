@@ -10,14 +10,16 @@ const ctrl_team = require('../controllers/teams_controller');
 const ctrl_summoner = require('../controllers/summoners_controller');
 
 router.get('/', (req, res) => {
-    game_api.getMatchData(4036701994, (err, data) => {
-        if (err) {
-            console.log('failed to get march data');
-            return;
-        }
-        const matchData = JSON.parse(data);
-        res.send(matchData.platformId);
-    });
+    res.send(
+        '<div style="font-family: monospace; white-space: pre; margin: 0 auto;">' +
+            ' _____     ______     __  __        __  __     __     ______     ______   ______     ______     __  __    <br>' +
+            '/\\  __-.  /\\  ___\\   /\\ \\/ /       /\\ \\_\\ \\   /\\ \\   /\\  ___\\   /\\__  _\\ /\\  __ \\   /\\  == \\   /\\ \\_\\ \\   <br>' +
+            '\\ \\ \\/\\ \\ \\ \\ \\____  \\ \\  _"-.     \\ \\  __ \\  \\ \\ \\  \\ \\___  \\  \\/_/\\ \\/ \\ \\ \\/\\ \\  \\ \\  __<   \\ \\____ \\  <br>' +
+            ' \\ \\____-  \\ \\_____\\  \\ \\_\\ \\_\\     \\ \\_\\ \\_\\  \\ \\_\\  \\/\\_____\\    \\ \\_\\  \\ \\_____\\  \\ \\_\\ \\_\\  \\/\\_____\\ <br>' +
+            '  \\/____/   \\/_____/   \\/_/\\/_/      \\/_/\\/_/   \\/_/   \\/_____/     \\/_/   \\/_____/   \\/_/ /_/   \\/_____/ <br>' +
+            '                                                                                                          <br>' +
+            '</div>'
+    );
 });
 
 // summoner

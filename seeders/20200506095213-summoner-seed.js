@@ -4,7 +4,7 @@ const game_api = require('../src/lol-api/game-api');
 const userList = [
     '제퇴기',
     '수박송송',
-    '무빙안좋은사람',
+    '정확신속고급남탓',
     '석진인데요',
     'High Bright Hero',
     '주님하나더가요',

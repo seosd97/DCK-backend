@@ -1,6 +1,6 @@
 'use strict';
 const game_api = require('../src/lol-api/game-api');
-const { Team, Match } = require('../models');
+const { Team, Summoner, Match } = require('../models');
 
 const matchDatas = [
     { id: 4036672778, type: 'groupstage', round: 1, blue: '석진팀', red: '수빈팀' },
@@ -89,10 +89,11 @@ module.exports = {
                 teamDTOs.push(teamRecord);
             }
 
+            const summoners = await Summoner.findAll();
             for (let s in data.participants) {
                 const dto = data.participants[s];
                 const summonerRecord = {
-                    SummonerId: 121,
+                    SummonerId: summoners[0].id,
                     MatchId: matchDTO.id,
                     cid: dto.championId,
                     spell1_id: dto.spell1Id,
