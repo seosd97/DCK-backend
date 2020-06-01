@@ -93,6 +93,13 @@ const makeMatchData = async matchData => {
         for (let i in summonerDatas) {
             const sumDto = summonerDatas[i].toJSON();
 
+            let sumName = 'NULL';
+            const summoner = await summonerDatas[i].getSummoner();
+            if (summoner !== null) {
+                sumName = summoner.name;
+            }
+
+            sumDto.summonerName = sumName;
             if (sumDto.camp_id === teamData.camp_id) {
                 summonerDTOs.push(sumDto);
             }
