@@ -9,9 +9,13 @@ exports.getTournaments = (req, res) => {
 exports.getTournamentData = async (req, res) => {
     const id = parseInt(req.params.id, 10);
 
+    let payload = {};
     const tournament = await TournamentGroup.findOne({
         where: {
             id: id
+        },
+        attributes: {
+            exclude: ['createdAt', 'updatedAt']
         }
     });
 
@@ -23,8 +27,8 @@ exports.getTournamentData = async (req, res) => {
 
         return;
     }
+    payload = tournament.toJSON();
 
-    let payload = {};
     const matchDTOs = [];
     const matches = await tournament.getMatches({
         attributes: {

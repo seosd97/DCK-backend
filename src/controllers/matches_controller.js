@@ -53,9 +53,20 @@ const makeMatchData = async matchData => {
     payload.tournamentId = matchData.TournamentGroupId;
 
     let teamDTOs = [];
-    const teamDatas = await matchData.getTeamHistories();
+    const teamDatas = await matchData.getTeamHistories({
+        attributes: {
+            exclude: ['createdAt', 'updatedAt']
+        }
+    });
+    const summonerDatas = await matchData.getSummonerHistories({
+        attributes: {
+            exclude: ['createdAt', 'updatedAt']
+        }
+    });
+
     for (let i in teamDatas) {
         const teamData = teamDatas[i];
+        let dto = teamData.toJSON();
         const team = await Team.findOne({
             where: {
                 id: teamData.TeamId
@@ -78,34 +89,23 @@ const makeMatchData = async matchData => {
             teamName = team.name;
         }
 
-        const dto = {
-            teamName: teamName,
-            data: teamData.toJSON(),
-            bans: bans
-        };
+        let summonerDTOs = [];
+        for (let i in summonerDatas) {
+            const sumDto = summonerDatas[i].toJSON();
 
-        delete dto.data.createdAt;
-        delete dto.data.updatedAt;
+            if (sumDto.camp_id === teamData.camp_id) {
+                summonerDTOs.push(sumDto);
+            }
+        }
+
+        dto.teamName = teamName;
+        dto.bans = bans;
+        dto.summoners = summonerDTOs;
 
         teamDTOs.push(dto);
-        console.log(dto);
     }
 
     payload.teams = teamDTOs;
-
-    let summonerDTOs = [];
-    const summonerDatas = await matchData.getSummonerHistories();
-    for (let i in summonerDatas) {
-        const sumData = summonerDatas[i];
-        const dto = sumData.toJSON();
-
-        delete dto.createdAt;
-        delete dto.updatedAt;
-
-        summonerDTOs.push(dto);
-    }
-
-    payload.summoners = summonerDTOs;
 
     return payload;
 };
