@@ -32,6 +32,15 @@ module.exports = (sequelize, DataTypes) => {
             wardsKilled: DataTypes.INTEGER,
             perkPrimaryStyle: DataTypes.INTEGER,
             perkSubStyle: DataTypes.INTEGER,
+            rune0: DataTypes.INTEGER,
+            rune1: DataTypes.INTEGER,
+            rune2: DataTypes.INTEGER,
+            rune3: DataTypes.INTEGER,
+            rune4: DataTypes.INTEGER,
+            rune5: DataTypes.INTEGER,
+            statPerk0: DataTypes.INTEGER,
+            statPerk1: DataTypes.INTEGER,
+            statPerk2: DataTypes.INTEGER,
             participantId: DataTypes.INTEGER
         },
         {}

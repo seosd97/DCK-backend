@@ -53,9 +53,9 @@ router.get('/history/team/:team_name');
 router.get('/history/:summoner_name');
 
 // champion
-router.get('/champions', ctrl_champion.getAllChampions);
-router.get('/champion/:id', ctrl_champion.getChampionById);
-router.get('/champion/:name', ctrl_champion.getChampionByName);
+// router.get('/champions', ctrl_champion.getAllChampions);
+// router.get('/champion/:id', ctrl_champion.getChampionById);
+// router.get('/champion/:name', ctrl_champion.getChampionByName);
 
 // register
 router.post('/register/tournament');

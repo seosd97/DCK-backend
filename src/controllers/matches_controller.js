@@ -84,6 +84,10 @@ const makeMatchData = async matchData => {
             raw: true
         });
 
+        let teamKills = 0;
+        let teamDeaths = 0;
+        let teamAssists = 0;
+        let teamGold = 0;
         let teamName = 'NULL';
         if (team !== null) {
             teamName = team.name;
@@ -101,10 +105,19 @@ const makeMatchData = async matchData => {
 
             sumDto.summonerName = sumName;
             if (sumDto.camp_id === teamData.camp_id) {
+                teamKills += sumDto.kill;
+                teamDeaths += sumDto.death;
+                teamAssists += sumDto.assist;
+                teamGold += sumDto.goldEarned;
+
                 summonerDTOs.push(sumDto);
             }
         }
 
+        dto.kills = teamKills;
+        dto.deaths = teamDeaths;
+        dto.assists = teamAssists;
+        dto.teamGold = teamGold;
         dto.teamName = teamName;
         dto.bans = bans;
         dto.summoners = summonerDTOs;
