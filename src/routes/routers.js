@@ -32,7 +32,7 @@ router.get('/summoner/:name', ctrl_summoner.getSummonerByName);
 router.get('/teams', ctrl_team.getAllTeams);
 router.post('/teams');
 router.get('/teams/:group_id', ctrl_team.getTeamByGroupId);
-router.get('/team/:name', ctrl_team.getTeamByName);
+router.get('/team/:name', ctrl_team.getTeamInfo);
 router.get('/team/:name/summoners', ctrl_team.getSummonersOfTeam);
 router.get('/team/register');
 

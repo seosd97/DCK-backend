@@ -15,22 +15,35 @@ exports.getAllTeams = (req, res) => {
         });
 };
 
-exports.getTeamByName = (req, res) => {
-    Team.findOne({
+exports.getTeamInfo = async (req, res) => {
+    const teamData = await Team.findOne({
         where: {
             name: req.params.name
         },
+        include: {
+            model: Summoner,
+            attributes: {
+                exclude: ['createdAt', 'updatedAt']
+            },
+            through: { attributes: [] }
+        },
         attributes: {
             exclude: ['createdAt', 'updatedAt']
-        },
-        raw: true
-    })
-        .then(d => {
-            res.json(d);
-        })
-        .catch(err => {
-            res.json(err);
+        }
+    });
+
+    if (teamData === null) {
+        res.json({
+            status: 'error',
+            msg: 'invalid team name'
         });
+    }
+
+    const payload = teamData.toJSON();
+    const tournamentData = await teamData.getTournamentGroup();
+    payload.tournamentName = tournamentData.name;
+
+    res.json(payload);
 };
 
 exports.getTeamByGroupId = (req, res) => {
@@ -67,15 +80,13 @@ exports.getSummonersOfTeam = async (req, res) => {
     }
 
     const payload = [];
-    const summoners = await teamData.getSummoners();
-    for (let i in summoners) {
-        const summoner = summoners[i].toJSON();
-
-        delete summoner.createdAt;
-        delete summoner.updatedAt;
-
-        payload.push(summoner);
-    }
+    const summoners = await teamData.getSummoners({
+        attributes: {
+            exclude: ['createdAt', 'updatedAt']
+        },
+        raw: true
+    });
+    payload.push(summoners);
 
     res.json(payload);
 };
