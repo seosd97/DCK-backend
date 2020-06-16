@@ -11,7 +11,7 @@ exports.getAllTeams = async (req, res) => {
         }
     });
 
-    res.json(teamData);
+    res.json({ teams: teamData });
 };
 
 exports.getTeamInfo = async (req, res) => {

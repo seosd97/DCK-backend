@@ -39,6 +39,7 @@ router.get('/team/register');
 // tournament
 router.post('/tournaments');
 router.get('/tournaments', ctrl_tournament.getTournaments);
+router.get('/tournaments/teams', ctrl_tournament.getTeamPerTournament);
 router.get('/tournament/:id', ctrl_tournament.getTournamentData);
 router.get('/tournament/:id/matches');
 router.get('/tournament/:group_id/match/:match_id');
