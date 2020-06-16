@@ -1,18 +1,17 @@
-const { Team, Summoner } = require('../../models');
+const { Team, Summoner, TournamentGroup } = require('../../models');
 
-exports.getAllTeams = (req, res) => {
-    Team.findAll({
+exports.getAllTeams = async (req, res) => {
+    const teamData = await Team.findAll({
+        include: {
+            model: TournamentGroup,
+            attributes: ['name']
+        },
         attributes: {
             exclude: ['createdAt', 'updatedAt']
-        },
-        raw: true
-    })
-        .then(d => {
-            res.json(d);
-        })
-        .catch(err => {
-            res.json(err);
-        });
+        }
+    });
+
+    res.json(teamData);
 };
 
 exports.getTeamInfo = async (req, res) => {
@@ -20,13 +19,19 @@ exports.getTeamInfo = async (req, res) => {
         where: {
             name: req.params.name
         },
-        include: {
-            model: Summoner,
-            attributes: {
-                exclude: ['createdAt', 'updatedAt']
+        include: [
+            {
+                model: Summoner,
+                attributes: {
+                    exclude: ['createdAt', 'updatedAt']
+                },
+                through: { attributes: [] }
             },
-            through: { attributes: [] }
-        },
+            {
+                model: TournamentGroup,
+                attributes: ['name']
+            }
+        ],
         attributes: {
             exclude: ['createdAt', 'updatedAt']
         }
@@ -39,15 +44,11 @@ exports.getTeamInfo = async (req, res) => {
         });
     }
 
-    const payload = teamData.toJSON();
-    const tournamentData = await teamData.getTournamentGroup();
-    payload.tournamentName = tournamentData.name;
-
-    res.json(payload);
+    res.json(teamData.toJSON());
 };
 
-exports.getTeamByGroupId = (req, res) => {
-    Team.findAll({
+exports.getTeamByGroupId = async (req, res) => {
+    const teamData = Team.findAll({
         where: {
             TournamentGroupId: req.params.group_id
         },
@@ -55,13 +56,9 @@ exports.getTeamByGroupId = (req, res) => {
             exclude: ['createdAt', 'updatedAt']
         },
         raw: true
-    })
-        .then(d => {
-            res.json(d);
-        })
-        .catch(err => {
-            res.json(err);
-        });
+    });
+
+    res.json(teamData);
 };
 
 exports.getSummonersOfTeam = async (req, res) => {
@@ -69,7 +66,15 @@ exports.getSummonersOfTeam = async (req, res) => {
         where: {
             name: req.params.name
         },
-        raw: true
+        include: [
+            {
+                model: Summoner,
+                attributes: {
+                    exclude: ['createdAt', 'updatedAt']
+                },
+                through: { attributes: [] }
+            }
+        ]
     });
 
     if (teamData === null) {
@@ -79,14 +84,5 @@ exports.getSummonersOfTeam = async (req, res) => {
         });
     }
 
-    const payload = [];
-    const summoners = await teamData.getSummoners({
-        attributes: {
-            exclude: ['createdAt', 'updatedAt']
-        },
-        raw: true
-    });
-    payload.push(summoners);
-
-    res.json(payload);
+    res.json(teamData.Summoners);
 };
