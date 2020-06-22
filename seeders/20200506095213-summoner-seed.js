@@ -47,6 +47,7 @@ module.exports = {
                 uuid: data.id,
                 account_id: data.accountId,
                 name: data.name,
+                profile_icon_id: data.profileIconId,
                 createdAt: new Date(),
                 updatedAt: new Date()
             };

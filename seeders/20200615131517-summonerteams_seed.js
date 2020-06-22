@@ -73,7 +73,7 @@ module.exports = {
 
                 results.push({
                     TeamId: team.id,
-                    SummonerId: summonerData.id,
+                    summoner_uuid: summonerData.uuid,
                     createdAt: new Date(),
                     updatedAt: new Date()
                 });

@@ -92,8 +92,8 @@ module.exports = {
             const summoners = await Summoner.findAll();
             for (let s in data.participants) {
                 const dto = data.participants[s];
-                const summonerRecord = {
-                    SummonerId: summoners[0].id,
+                const summonerStat = {
+                    summoner_uuid: summoners[0].uuid,
                     MatchId: matchDTO.id,
                     cid: dto.championId,
                     spell1_id: dto.spell1Id,
@@ -139,7 +139,7 @@ module.exports = {
                     updatedAt: new Date()
                 };
 
-                summonerDTOs.push(summonerRecord);
+                summonerDTOs.push(summonerStat);
             }
         }
 
