@@ -50,8 +50,12 @@ router.get('/match/:id', ctrl_match.getMatchByGameId);
 router.get('/riotapi/match/:id', game_api.getMatchDataFromAPI);
 
 // history
-router.get('/history/team/:team_name');
-router.get('/history/:summoner_name');
+router.get('/matches/team/:name');
+router.get('/matches/summoner/:uuid', ctrl_match.getMatchBySummoner);
+
+// statics
+router.get('/statics/team/:name');
+router.get('/statics/summoner/:name');
 
 // champion
 // router.get('/champions', ctrl_champion.getAllChampions);

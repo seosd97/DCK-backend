@@ -8,12 +8,13 @@ module.exports = {
                 primaryKey: true,
                 type: Sequelize.INTEGER
             },
-            camp_id: {
-                type: Sequelize.INTEGER
-            },
-            win: {
-                type: Sequelize.BOOLEAN
-            },
+            camp_id: Sequelize.INTEGER,
+            win: Sequelize.BOOLEAN,
+            towerKills: Sequelize.INTEGER,
+            inhibitorKills: Sequelize.INTEGER,
+            dragonKills: Sequelize.INTEGER,
+            riftHeraldKills: Sequelize.INTEGER,
+            baronKills: Sequelize.INTEGER,
             createdAt: {
                 allowNull: false,
                 type: Sequelize.DATE

@@ -1,4 +1,4 @@
-const { Match, Team, Summoner, TeamHistory, BanHistory, SummonerHistory } = require('../../models');
+const { Match, Team, Summoner, BanHistory } = require('../../models');
 
 exports.getAllMatches = async (req, res) => {
     const payload = [];
@@ -37,6 +37,46 @@ exports.getMatchByGameId = async (req, res) => {
     res.json(payload);
 };
 
+exports.getMatchBySummoner = async (req, res) => {
+    const summoner = await Summoner.findOne({
+        where: {
+            uuid: req.params.uuid
+        }
+    });
+
+    if (summoner === null) {
+        res.json({ status: 'error', msg: 'invalid uuid' });
+        return;
+    }
+
+    const histories = await summoner.getSummonerRecords();
+
+    let payload = [];
+    for (let i in histories) {
+        const match = await histories[i].getMatch({
+            attributes: {
+                exclude: ['createdAt', 'updatedAt']
+            }
+        });
+
+        const data = await makeMatchData(match);
+        payload.push(data);
+    }
+
+    // if (matches === null) {
+    //     console.log('cant\'t find matches');
+    //     res.json({ status: 'error', msg: 'cant\'t find matches' });
+    //     return;
+    // }
+
+    // for (let i in matches) {
+    //     const match = await makeMatchData(matches[i]);
+    //     payload.push(match);
+    // }
+
+    res.json(payload);
+};
+
 const makeMatchData = async matchData => {
     let payload = {};
     if (matchData === null) {
@@ -50,15 +90,10 @@ const makeMatchData = async matchData => {
     payload.gameId = matchData.gid;
     payload.duration = matchData.duration;
     payload.round = matchData.round;
-    payload.tournamentId = matchData.TournamentGroupId;
+    payload.tournamentId = matchData.TournamentId;
 
     let teamDTOs = [];
-    const teamDatas = await matchData.getTeamHistories({
-        attributes: {
-            exclude: ['createdAt', 'updatedAt']
-        }
-    });
-    const summonerDatas = await matchData.getSummonerHistories({
+    const teamDatas = await matchData.getTeamRecords({
         attributes: {
             exclude: ['createdAt', 'updatedAt']
         }
@@ -93,39 +128,30 @@ const makeMatchData = async matchData => {
             teamName = team.name;
         }
 
-        let summonerDTOs = [];
-        for (let i in summonerDatas) {
-            const sumDto = summonerDatas[i].toJSON();
-
-            let sumName = 'NULL';
-            const summoner = await summonerDatas[i].getSummoner();
-            if (summoner !== null) {
-                sumName = summoner.name;
-            }
-
-            sumDto.summonerName = sumName;
-            if (sumDto.camp_id === teamData.camp_id) {
-                teamKills += sumDto.kill;
-                teamDeaths += sumDto.death;
-                teamAssists += sumDto.assist;
-                teamGold += sumDto.goldEarned;
-
-                summonerDTOs.push(sumDto);
-            }
-        }
-
         dto.kills = teamKills;
         dto.deaths = teamDeaths;
         dto.assists = teamAssists;
         dto.teamGold = teamGold;
         dto.teamName = teamName;
         dto.bans = bans;
-        dto.summoners = summonerDTOs;
 
         teamDTOs.push(dto);
     }
 
+    const summonerDatas = await matchData.getSummonerRecords({
+        attributes: {
+            exclude: ['summoner_uuid', 'createdAt', 'updatedAt']
+        },
+        include: {
+            model: Summoner,
+            attributes: {
+                exclude: ['createdAt', 'updatedAt']
+            }
+        }
+    });
+
     payload.teams = teamDTOs;
+    payload.summoners = summonerDatas;
 
     return payload;
 };

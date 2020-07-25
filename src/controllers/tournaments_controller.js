@@ -1,7 +1,7 @@
-const { TournamentGroup, Team } = require('../../models');
+const { Tournament, Team } = require('../../models');
 
 exports.getTournaments = (req, res) => {
-    TournamentGroup.findAll().then(r => {
+    Tournament.findAll().then(r => {
         res.json(r);
     });
 };
@@ -10,7 +10,7 @@ exports.getTournamentData = async (req, res) => {
     const id = parseInt(req.params.id, 10);
 
     let payload = {};
-    const tournament = await TournamentGroup.findOne({
+    const tournament = await Tournament.findOne({
         where: {
             id: id
         },
@@ -36,7 +36,7 @@ exports.getTournamentData = async (req, res) => {
         }
     });
     for (let i in matches) {
-        const teamRecords = await matches[i].getTeamHistories({
+        const teamRecords = await matches[i].getTeamRecords({
             attributes: {
                 exclude: ['createdAt', 'updatedAt']
             }
@@ -68,7 +68,7 @@ exports.getTournamentData = async (req, res) => {
 };
 
 exports.getTeamPerTournament = async (req, res) => {
-    const tournaments = await TournamentGroup.findAll({
+    const tournaments = await Tournament.findAll({
         include: {
             model: Team,
             attributes: {

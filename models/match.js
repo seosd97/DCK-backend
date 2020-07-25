@@ -4,21 +4,18 @@ module.exports = (sequelize, DataTypes) => {
         'Match',
         {
             type: DataTypes.STRING,
-            gid: { type: DataTypes.BIGINT, defaultValue: 0 },
-            duration: DataTypes.INTEGER,
-            round: DataTypes.INTEGER
+            round: DataTypes.INTEGER,
+            game_id: DataTypes.BIGINT,
+            duration: { type: DataTypes.BIGINT, defaultValue: 0 },
+            game_creation: { type: DataTypes.BIGINT, defaultValue: 0 },
+            game_version: DataTypes.STRING
         },
-        {}
+        { underscored: true }
     );
     Match.associate = function(models) {
-        // Match.hasMany(models.BanHistory, {
-        //     foreignKey: 'GameId',
-        //     sourceKey: 'gid'
-        // });
-        Match.hasMany(models.BanHistory);
         Match.hasMany(models.TeamHistory);
         Match.hasMany(models.SummonerHistory);
-        Match.belongsTo(models.TournamentGroup, {
+        Match.belongsTo(models.Tournament, {
             onDelete: 'CASCADE',
             foreignKey: {
                 allowNull: false

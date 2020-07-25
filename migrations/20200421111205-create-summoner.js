@@ -9,17 +9,15 @@ module.exports = {
                 type: Sequelize.INTEGER
             },
             uuid: {
-                type: Sequelize.STRING
+                type: Sequelize.STRING,
+                unique: true,
+                primaryKey: true
             },
-            account_id: {
-                type: Sequelize.STRING
-            },
-            name: {
-                type: Sequelize.STRING
-            },
-            tier: {
-                type: Sequelize.STRING
-            },
+            account_id: Sequelize.STRING,
+            name: Sequelize.STRING,
+            profile_icon_id: Sequelize.INTEGER,
+            revision_date: Sequelize.BIGINT,
+            summoner_level: Sequelize.INTEGER,
             createdAt: {
                 allowNull: false,
                 type: Sequelize.DATE

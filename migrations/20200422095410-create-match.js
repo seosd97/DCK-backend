@@ -8,18 +8,18 @@ module.exports = {
                 primaryKey: true,
                 type: Sequelize.INTEGER
             },
-            type: {
-                type: Sequelize.STRING
-            },
-            gid: {
-                type: Sequelize.BIGINT
-            },
+            type: Sequelize.STRING,
+            round: Sequelize.INTEGER,
+            game_id: Sequelize.BIGINT,
             duration: {
-                type: Sequelize.INTEGER
+                type: Sequelize.BIGINT,
+                defaultValue: 0
             },
-            creation_time: {
-                type: Sequelize.BIGINT
+            game_creation: {
+                type: Sequelize.BIGINT,
+                defaultValue: 0
             },
+            game_version: Sequelize.STRING,
             createdAt: {
                 allowNull: false,
                 type: Sequelize.DATE

@@ -11,9 +11,10 @@ module.exports = (sequelize, DataTypes) => {
             riftHeraldKills: DataTypes.INTEGER,
             baronKills: DataTypes.INTEGER
         },
-        {}
+        { underscored: true }
     );
     TeamHistory.associate = function(models) {
+        TeamHistory.hasMany(models.BanHistory);
         TeamHistory.belongsTo(models.Team, {
             onDelete: 'CASCADE',
             foreignKey: {
@@ -28,6 +29,5 @@ module.exports = (sequelize, DataTypes) => {
             }
         });
     };
-
     return TeamHistory;
 };

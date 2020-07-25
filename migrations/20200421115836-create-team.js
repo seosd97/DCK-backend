@@ -11,6 +11,10 @@ module.exports = {
             name: {
                 type: Sequelize.STRING
             },
+            prize: {
+                type: Sequelize.INTEGER,
+                defaultValue: 0
+            },
             createdAt: {
                 allowNull: false,
                 type: Sequelize.DATE
@@ -22,6 +26,9 @@ module.exports = {
         });
     },
     down: (queryInterface, Sequelize) => {
-        return queryInterface.dropTable('Teams');
+        return Promise.all([
+            queryInterface.dropTable('SummonerTeams'),
+            queryInterface.dropTable('Teams')
+        ]);
     }
 };

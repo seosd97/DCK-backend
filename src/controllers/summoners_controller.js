@@ -1,4 +1,4 @@
-const { Summoner } = require('../../models');
+const { Summoner, SummonerRecord } = require('../../models');
 
 exports.getAllSummoners = (req, res) => {
     Summoner.findAll({
@@ -31,4 +31,18 @@ exports.getSummonerByName = (req, res) => {
         .catch(err => {
             res.json(err);
         });
+};
+
+exports.getSummonerMatchHistory = async (req, res) => {
+    const matches = await SummonerRecord.findAll({
+        where: {
+            summoner_uuid: req.params.uuid
+        },
+        attributes: {
+            exclude: ['createdAt', 'updatedAt']
+        },
+        raw: true
+    });
+
+    res.json(matches);
 };

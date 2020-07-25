@@ -1,9 +1,9 @@
-const { Team, Summoner, TournamentGroup } = require('../../models');
+const { Team, Summoner, Tournament } = require('../../models');
 
 exports.getAllTeams = async (req, res) => {
     const teamData = await Team.findAll({
         include: {
-            model: TournamentGroup,
+            model: Tournament,
             attributes: ['name']
         },
         attributes: {
@@ -28,7 +28,7 @@ exports.getTeamInfo = async (req, res) => {
                 through: { attributes: [] }
             },
             {
-                model: TournamentGroup,
+                model: Tournament,
                 attributes: ['name']
             }
         ],
@@ -50,7 +50,7 @@ exports.getTeamInfo = async (req, res) => {
 exports.getTeamByGroupId = async (req, res) => {
     const teamData = Team.findAll({
         where: {
-            TournamentGroupId: req.params.group_id
+            TournamentId: req.params.group_id
         },
         attributes: {
             exclude: ['createdAt', 'updatedAt']
