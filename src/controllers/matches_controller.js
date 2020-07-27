@@ -49,7 +49,7 @@ exports.getMatchBySummoner = async (req, res) => {
         return;
     }
 
-    const histories = await summoner.getSummonerRecords();
+    const histories = await summoner.getSummonerHistorys();
 
     let payload = [];
     for (let i in histories) {
@@ -77,6 +77,13 @@ exports.getMatchBySummoner = async (req, res) => {
     res.json(payload);
 };
 
+exports.getMatchesByTournamentId = async (req, res) => {
+    // const matches = await Match.findAll({
+    //     where: {
+    //     }
+    // })
+};
+
 const makeMatchData = async matchData => {
     let payload = {};
     if (matchData === null) {
@@ -93,7 +100,7 @@ const makeMatchData = async matchData => {
     payload.tournamentId = matchData.TournamentId;
 
     let teamDTOs = [];
-    const teamDatas = await matchData.getTeamRecords({
+    const teamDatas = await matchData.getTeamHistories({
         attributes: {
             exclude: ['createdAt', 'updatedAt']
         }
@@ -138,7 +145,7 @@ const makeMatchData = async matchData => {
         teamDTOs.push(dto);
     }
 
-    const summonerDatas = await matchData.getSummonerRecords({
+    const summonerDatas = await matchData.getSummonerHistorys({
         attributes: {
             exclude: ['summoner_uuid', 'createdAt', 'updatedAt']
         },

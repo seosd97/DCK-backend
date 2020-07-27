@@ -12,11 +12,11 @@ module.exports = {
                 type: Sequelize.STRING,
                 allowNull: false
             },
-            tournament_code: {
-                type: Sequelize.STRING,
-                allowNull: false,
-                unique: true
-            },
+            // tournament_code: {
+            //     type: Sequelize.STRING,
+            //     allowNull: false,
+            //     unique: true
+            // },
             createdAt: {
                 allowNull: false,
                 type: Sequelize.DATE

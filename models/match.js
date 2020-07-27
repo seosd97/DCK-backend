@@ -10,7 +10,7 @@ module.exports = (sequelize, DataTypes) => {
             game_creation: { type: DataTypes.BIGINT, defaultValue: 0 },
             game_version: DataTypes.STRING
         },
-        { underscored: true }
+        {}
     );
     Match.associate = function(models) {
         Match.hasMany(models.TeamHistory);

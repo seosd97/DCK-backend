@@ -10,22 +10,12 @@ module.exports = (sequelize, DataTypes) => {
             revision_date: DataTypes.BIGINT,
             summoner_level: DataTypes.INTEGER
         },
-        { underscored: true }
+        {}
     );
     Summoner.associate = function(models) {
         Summoner.hasMany(models.SummonerHistory, {
             foreignKey: 'summoner_uuid',
             sourceKey: 'uuid'
-        });
-
-        Summoner.belongsToMany(models.Tournament, {
-            through: 'TournamentSummoners',
-            onDelete: 'CASCADE',
-            foreignKey: {
-                // name: 'tournament_code',
-                allowNull: false
-            }
-            // sourceKey: 'tournament_code'
         });
 
         Summoner.belongsToMany(models.Team, {

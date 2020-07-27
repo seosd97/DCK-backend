@@ -46,7 +46,7 @@ module.exports = (sequelize, DataTypes) => {
             statPerk2: { type: DataTypes.INTEGER, defaultValue: 0 },
             participantId: { type: DataTypes.INTEGER, defaultValue: 0 }
         },
-        { underscored: true }
+        {}
     );
     SummonerHistory.associate = function(models) {
         SummonerHistory.belongsTo(models.Summoner, {

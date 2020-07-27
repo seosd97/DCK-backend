@@ -35,9 +35,10 @@ module.exports = {
                 'Matches',
                 [
                     {
-                        gid: data.gameId,
+                        game_id: data.gameId,
                         duration: data.gameDuration,
                         game_creation: data.gameCreation,
+                        game_version: data.gameVersion,
                         type: matchData.type,
                         round: matchData.round,
                         TournamentId: 1,
@@ -50,7 +51,7 @@ module.exports = {
 
             const matchDTO = await Match.findOne({
                 where: {
-                    gid: data.gameId
+                    game_id: matchData.id
                 }
             });
 
@@ -59,11 +60,10 @@ module.exports = {
                 const teamName = teamDTO.teamId == 100 ? matchData.blue : matchData.red;
                 console.log(teamName);
                 const teamData = await Team.findOne({ where: { name: teamName } });
-                const teamRecord = {
+                const teamRecord = await matchDTO.createTeamHistory({
                     TeamId: teamData.id,
                     camp_id: teamDTO.teamId,
                     win: teamDTO.win == 'Win',
-                    MatchId: matchDTO.id,
                     towerKills: teamDTO.towerKills,
                     inhibitorKills: teamDTO.inhibitorKills,
                     dragonKills: teamDTO.dragonKills,
@@ -71,17 +71,16 @@ module.exports = {
                     baronKills: teamDTO.baronKills,
                     createdAt: new Date(),
                     updatedAt: new Date()
-                };
+                });
 
-                let sIndex = 0;
+                let sidx = 0;
                 const summoners = await teamData.getSummoners();
                 for (let s in data.participants) {
                     const dto = data.participants[s];
                     if (dto.teamId !== teamDTO.teamId) continue;
 
-                    const summonerStat = {
-                        summoner_uuid: summoners[sIndex++].uuid,
-                        MatchId: matchDTO.id,
+                    const summonerStat = await matchDTO.createSummonerHistory({
+                        summoner_uuid: summoners[sidx++].uuid,
                         cid: dto.championId,
                         spell1_id: dto.spell1Id,
                         spell2_id: dto.spell2Id,
@@ -110,6 +109,8 @@ module.exports = {
                         neutralMinionsKilled: dto.stats.neutralMinionsKilled,
                         wardsPlaced: dto.stats.wardsPlaced,
                         wardsKilled: dto.stats.wardsKilled,
+                        visionScore: dto.stats.visionScore,
+                        totalVisionWardsBoughtInGame: dto.stats.totalVisionWardsBoughtInGame,
                         perkPrimaryStyle: dto.stats.perkPrimaryStyle,
                         perkSubStyle: dto.stats.perkSubStyle,
                         rune0: dto.stats.perk0,
@@ -124,21 +125,19 @@ module.exports = {
                         participantId: dto.participantId,
                         createdAt: new Date(),
                         updatedAt: new Date()
-                    };
+                    });
 
                     summonerDTOs.push(summonerStat);
                 }
 
                 for (let b in teamDTO.bans) {
                     const banData = teamDTO.bans[b];
-                    const banRecord = {
-                        TeamId: teamData.id,
-                        MatchId: matchDTO.id,
+                    const banRecord = await teamRecord.createBanHistory({
                         cid: banData.championId,
                         turn: banData.pickTurn,
                         createdAt: new Date(),
                         updatedAt: new Date()
-                    };
+                    });
 
                     banDTOs.push(banRecord);
                 }
@@ -148,18 +147,18 @@ module.exports = {
         }
 
         return Promise.all([
-            queryInterface.bulkInsert('TeamRecords', teamDTOs, {}),
-            queryInterface.bulkInsert('BanHistories', banDTOs, {}),
-            queryInterface.bulkInsert('SummonerRecords', summonerDTOs, {})
+            // queryInterface.bulkInsert('TeamHistories', teamDTOs, {}),
+            // queryInterface.bulkInsert('BanHistories', banDTOs, {}),
+            // queryInterface.bulkInsert('SummonerHistorys', summonerDTOs, {})
         ]);
     },
 
     down: (queryInterface, Sequelize) => {
         return Promise.all([
             queryInterface.bulkDelete('Matches', null, {}),
-            queryInterface.bulkDelete('TeamRecords', null, {}),
+            queryInterface.bulkDelete('TeamHistories', null, {}),
             queryInterface.bulkDelete('BanHistories', null, {}),
-            queryInterface.bulkDelete('SummonerRecords', null, {})
+            queryInterface.bulkDelete('SummonerHistories', null, {})
         ]);
     }
 };

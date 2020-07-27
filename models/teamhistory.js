@@ -11,7 +11,7 @@ module.exports = (sequelize, DataTypes) => {
             riftHeraldKills: DataTypes.INTEGER,
             baronKills: DataTypes.INTEGER
         },
-        { underscored: true }
+        {}
     );
     TeamHistory.associate = function(models) {
         TeamHistory.hasMany(models.BanHistory);

@@ -1,20 +1,21 @@
 const { Team, Summoner, Tournament } = require('../../models');
 
 exports.getAllTeams = async (req, res) => {
-    const teamData = await Team.findAll({
+    const teamDatas = await Team.findAll({
         include: {
             model: Tournament,
             attributes: ['name']
         },
         attributes: {
             exclude: ['createdAt', 'updatedAt']
-        }
+        },
+        raw: true
     });
 
-    res.json({ teams: teamData });
+    res.json(teamDatas);
 };
 
-exports.getTeamInfo = async (req, res) => {
+exports.getTeamByName = async (req, res) => {
     const teamData = await Team.findOne({
         where: {
             name: req.params.name
@@ -39,26 +40,16 @@ exports.getTeamInfo = async (req, res) => {
 
     if (teamData === null) {
         res.json({
-            status: 'error',
-            msg: 'invalid team name'
+            status: {
+                code: '404',
+                msg: `failed to find team ${req.params.name}`
+            }
         });
+
+        return;
     }
 
     res.json(teamData.toJSON());
-};
-
-exports.getTeamByGroupId = async (req, res) => {
-    const teamData = Team.findAll({
-        where: {
-            TournamentId: req.params.group_id
-        },
-        attributes: {
-            exclude: ['createdAt', 'updatedAt']
-        },
-        raw: true
-    });
-
-    res.json(teamData);
 };
 
 exports.getSummonersOfTeam = async (req, res) => {
@@ -79,9 +70,13 @@ exports.getSummonersOfTeam = async (req, res) => {
 
     if (teamData === null) {
         res.json({
-            status: 'error',
-            msg: 'invalid team name'
+            status: {
+                code: '404',
+                msg: `failed to find team ${req.params.name}`
+            }
         });
+
+        return;
     }
 
     res.json(teamData.Summoners);

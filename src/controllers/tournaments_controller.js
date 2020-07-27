@@ -1,9 +1,14 @@
 const { Tournament, Team } = require('../../models');
 
-exports.getTournaments = (req, res) => {
-    Tournament.findAll().then(r => {
-        res.json(r);
+exports.getTournaments = async (req, res) => {
+    const datas = await Tournament.findAll({
+        attributes: {
+            exclude: ['createdAt', 'updatedAt']
+        },
+        raw: true
     });
+
+    res.json(datas);
 };
 
 exports.getTournamentData = async (req, res) => {
@@ -36,21 +41,21 @@ exports.getTournamentData = async (req, res) => {
         }
     });
     for (let i in matches) {
-        const teamRecords = await matches[i].getTeamRecords({
+        const TeamHistories = await matches[i].getTeamHistories({
             attributes: {
                 exclude: ['createdAt', 'updatedAt']
             }
         });
 
         const recordDTOs = [];
-        for (let j in teamRecords) {
-            const team = await teamRecords[j].getTeam({
+        for (let j in TeamHistories) {
+            const team = await TeamHistories[j].getTeam({
                 attributes: {
                     include: ['name']
                 }
             });
 
-            const record = teamRecords[j].toJSON();
+            const record = TeamHistories[j].toJSON();
             record.teamName = team.name;
 
             recordDTOs.push(record);
@@ -67,7 +72,7 @@ exports.getTournamentData = async (req, res) => {
     res.json(payload);
 };
 
-exports.getTeamPerTournament = async (req, res) => {
+exports.getParticipationTeams = async (req, res) => {
     const tournaments = await Tournament.findAll({
         include: {
             model: Team,

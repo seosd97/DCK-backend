@@ -6,7 +6,7 @@ module.exports = (sequelize, DataTypes) => {
             cid: DataTypes.INTEGER,
             turn: DataTypes.INTEGER
         },
-        { underscored: true }
+        {}
     );
     BanHistory.associate = function(models) {
         BanHistory.belongsTo(models.TeamHistory, {

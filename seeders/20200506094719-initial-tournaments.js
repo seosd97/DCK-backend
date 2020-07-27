@@ -22,6 +22,12 @@ module.exports = {
                     name: 'DCK Season 3',
                     createdAt: new Date(),
                     updatedAt: new Date()
+                },
+                {
+                    id: 4,
+                    name: 'DCK Season 4',
+                    createdAt: new Date(),
+                    updatedAt: new Date()
                 }
             ],
             {}

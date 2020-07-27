@@ -1,42 +1,20 @@
-const { Summoner, SummonerRecord } = require('../../models');
+const { Summoner, SummonerHistory } = require('../../models');
 
-exports.getAllSummoners = (req, res) => {
-    Summoner.findAll({
+exports.getAllSummoners = async (req, res) => {
+    const datas = await Summoner.findAll({
         attributes: {
             exclude: ['createdAt', 'updatedAt']
         },
         raw: true
-    })
-        .then(d => {
-            res.json(d);
-        })
-        .catch(err => {
-            res.json(err);
-        });
+    });
+
+    res.json(datas);
 };
 
-exports.getSummonerByName = (req, res) => {
-    Summoner.findOne({
+exports.getSummonerData = async (req, res) => {
+    const data = await Summoner.findOne({
         where: {
-            name: req.params.name
-        },
-        attributes: {
-            exclude: ['createdAt', 'updatedAt']
-        },
-        raw: true
-    })
-        .then(d => {
-            res.json(d);
-        })
-        .catch(err => {
-            res.json(err);
-        });
-};
-
-exports.getSummonerMatchHistory = async (req, res) => {
-    const matches = await SummonerRecord.findAll({
-        where: {
-            summoner_uuid: req.params.uuid
+            name: req.params.id
         },
         attributes: {
             exclude: ['createdAt', 'updatedAt']
@@ -44,5 +22,41 @@ exports.getSummonerMatchHistory = async (req, res) => {
         raw: true
     });
 
-    res.json(matches);
+    if (data === null) {
+        req.json({
+            status: {
+                code: '404',
+                msg: `failed to find summoner ${req.params.id}`
+            }
+        });
+
+        return;
+    }
+
+    res.json(data);
+};
+
+exports.getSummonerDataByName = async (req, res) => {
+    const data = await Summoner.findOne({
+        where: {
+            name: req.params.name
+        },
+        attributes: {
+            exclude: ['createdAt', 'updatedAt']
+        },
+        raw: true
+    });
+
+    if (data === null) {
+        req.json({
+            status: {
+                code: '404',
+                msg: `failed to find summoner ${req.params.name}`
+            }
+        });
+
+        return;
+    }
+
+    res.json(data);
 };

@@ -9,7 +9,7 @@ module.exports = (sequelize, DataTypes) => {
                 defaultValue: 0
             }
         },
-        { underscored: true }
+        {}
     );
     Team.associate = function(models) {
         Team.hasMany(models.TeamHistory);
