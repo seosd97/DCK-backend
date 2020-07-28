@@ -41,7 +41,6 @@ router.get('/tournaments/:id', ctrl_tournament.getTournamentData);
 router.get('/matches', ctrl_match.getAllMatches);
 router.get('/matches/:game_id', ctrl_match.getMatchByGameId);
 router.get('/matches/by_tournament/:id', ctrl_match.getMatchesByTournamentId);
-router.get('/matches/:tournament_id/:type');
 
 // history
 router.get('/matches/team/:name');
@@ -56,5 +55,9 @@ router.post('/register/tournament');
 router.post('/register/match');
 router.post('/register/team');
 router.post('/register/summoner');
+router.get('/register/tournament');
+router.get('/register/match');
+router.get('/register/team');
+router.get('/register/summoner');
 
 module.exports = router;

@@ -27,7 +27,7 @@ exports.getMatchByGameId = async (req, res) => {
     const matchId = parseInt(req.params.game_id, 10);
     const matchData = await Match.findOne({
         where: {
-            gid: matchId
+            game_id: matchId
         }
     });
 
@@ -108,7 +108,7 @@ const makeMatchData = async matchData => {
 
     payload.id = matchData.id;
     payload.gameType = matchData.type;
-    payload.gameId = matchData.gid;
+    payload.gameId = matchData.game_id;
     payload.duration = matchData.duration;
     payload.round = matchData.round;
     payload.tournamentId = matchData.TournamentId;
