@@ -1,4 +1,4 @@
-const { Summoner, SummonerHistory } = require('../../models');
+const { Summoner, Team } = require('../../models');
 
 exports.getAllSummoners = async (req, res) => {
     const datas = await Summoner.findAll({
@@ -59,4 +59,54 @@ exports.getSummonerDataByName = async (req, res) => {
     }
 
     res.json(data);
+};
+
+exports.getSummonersOfTournament = async (req, res) => {
+    const teamDatas = await Team.findAll({
+        where: {
+            TournamentId: req.params.tournament_id
+        },
+        include: {
+            model: Summoner,
+            exclude: ['createdAt', 'updatedAt']
+        },
+        through: { attributes: [] }
+    });
+
+    let payload = [];
+    for (let i in teamDatas) {
+        payload = teamDatas[i].Summoners.concat(payload);
+    }
+
+    res.json(payload);
+};
+
+exports.getSummonersOfTeam = async (req, res) => {
+    const teamData = await Team.findOne({
+        where: {
+            name: req.params.team_name
+        },
+        include: [
+            {
+                model: Summoner,
+                attributes: {
+                    exclude: ['createdAt', 'updatedAt']
+                },
+                through: { attributes: [] }
+            }
+        ]
+    });
+
+    if (teamData === null) {
+        res.json({
+            status: {
+                code: '404',
+                msg: `failed to find team ${req.params.name}`
+            }
+        });
+
+        return;
+    }
+
+    res.json(teamData.Summoners);
 };

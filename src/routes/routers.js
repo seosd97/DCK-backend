@@ -23,25 +23,25 @@ router.get('/', (req, res) => {
 
 // summoner
 router.get('/summoners', ctrl_summoner.getAllSummoners);
-router.get('/summoners/:id');
+router.get('/summoners/by_tournament/:tournament_id', ctrl_summoner.getSummonersOfTournament);
+router.get('/summoners/by_team/:team_name', ctrl_summoner.getSummonersOfTeam);
+router.get('/summoners/:id', ctrl_summoner.getSummonerData);
 router.get('/summoners/by_name/:name', ctrl_summoner.getSummonerDataByName);
 
 // team
 router.get('/teams', ctrl_team.getAllTeams);
+router.get('/teams/by_tournament/:tournament_id', ctrl_team.getTeamsOfTournament);
 router.get('/teams/:name', ctrl_team.getTeamByName);
-router.get('/teams/:name/summoners', ctrl_team.getSummonersOfTeam);
 
 // tournament
 router.get('/tournaments', ctrl_tournament.getTournaments);
 router.get('/tournaments/:id', ctrl_tournament.getTournamentData);
-router.get('/tournaments/:id/teams', ctrl_tournament.getParticipationTeams);
-router.get('/tournaments/:id/summoners', ctrl_tournament.getParticipationTeams);
 
 // match
 router.get('/matches', ctrl_match.getAllMatches);
-router.get('/matches/:id', ctrl_match.getMatchByGameId);
+router.get('/matches/:game_id', ctrl_match.getMatchByGameId);
 router.get('/matches/by_tournament/:id', ctrl_match.getMatchesByTournamentId);
-router.get('/riot_api/matches/:id', game_api.getMatchDataFromAPI);
+router.get('/matches/:tournament_id/:type');
 
 // history
 router.get('/matches/team/:name');

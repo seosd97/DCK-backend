@@ -52,32 +52,16 @@ exports.getTeamByName = async (req, res) => {
     res.json(teamData.toJSON());
 };
 
-exports.getSummonersOfTeam = async (req, res) => {
-    const teamData = await Team.findOne({
+exports.getTeamsOfTournament = async (req, res) => {
+    const teamDatas = await Team.findAll({
         where: {
-            name: req.params.name
+            tournamentId: req.params.tournament_id
         },
-        include: [
-            {
-                model: Summoner,
-                attributes: {
-                    exclude: ['createdAt', 'updatedAt']
-                },
-                through: { attributes: [] }
-            }
-        ]
+        attributes: {
+            exclude: ['createdAt', 'updatedAt']
+        },
+        raw: true
     });
 
-    if (teamData === null) {
-        res.json({
-            status: {
-                code: '404',
-                msg: `failed to find team ${req.params.name}`
-            }
-        });
-
-        return;
-    }
-
-    res.json(teamData.Summoners);
+    res.json(teamDatas);
 };

@@ -1,4 +1,5 @@
 const { Tournament, Team } = require('../../models');
+const tournament = require('../../models/tournament');
 
 exports.getTournaments = async (req, res) => {
     const datas = await Tournament.findAll({
@@ -70,20 +71,4 @@ exports.getTournamentData = async (req, res) => {
     payload.matches = matchDTOs;
 
     res.json(payload);
-};
-
-exports.getParticipationTeams = async (req, res) => {
-    const tournaments = await Tournament.findAll({
-        include: {
-            model: Team,
-            attributes: {
-                exclude: ['createdAt', 'updatedAt']
-            }
-        },
-        attributes: {
-            exclude: ['createdAt', 'updatedAt']
-        }
-    });
-
-    res.json({ tournaments: tournaments });
 };

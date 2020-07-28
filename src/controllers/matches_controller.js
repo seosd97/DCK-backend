@@ -1,14 +1,13 @@
 const { Match, Team, Summoner, BanHistory } = require('../../models');
 
 exports.getAllMatches = async (req, res) => {
-    const payload = [];
-    const matches = await Match.findAll();
-    for (let i in matches) {
-        const data = await makeMatchData(matches[i]);
-        payload.push(data);
-    }
+    const matches = await Match.findAll({
+        attributes: {
+            exclude: ['createdAt', 'updatedAt']
+        }
+    });
 
-    res.json(payload);
+    res.json(matches);
 };
 
 exports.getMatchById = async (req, res) => {
@@ -25,7 +24,7 @@ exports.getMatchById = async (req, res) => {
 };
 
 exports.getMatchByGameId = async (req, res) => {
-    const matchId = parseInt(req.params.id, 10);
+    const matchId = parseInt(req.params.game_id, 10);
     const matchData = await Match.findOne({
         where: {
             gid: matchId
@@ -35,6 +34,21 @@ exports.getMatchByGameId = async (req, res) => {
     const payload = await makeMatchData(matchData);
 
     res.json(payload);
+};
+
+exports.getMatchesByType = async (req, res) => {
+    const matchDatas = await Match.findAll({
+        where: {
+            TournamentId: req.params.tournament_id,
+            type: req.params.type
+        },
+        attributes: {
+            exclude: ['createdAt', 'updatedAt']
+        },
+        raw: true
+    });
+
+    res.json(matchDatas);
 };
 
 exports.getMatchBySummoner = async (req, res) => {
