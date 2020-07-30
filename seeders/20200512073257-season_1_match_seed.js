@@ -207,13 +207,14 @@ module.exports = {
             }
         }
 
-        return Promise.all([]);
+        return null;
     },
 
     down: (queryInterface, Sequelize) => {
         return Promise.all([
             queryInterface.bulkDelete('MatchGroups', null, {}),
             queryInterface.bulkDelete('Matches', null, {}),
+            queryInterface.bulkDelete('MatchParticipants', null, {}),
             queryInterface.bulkDelete('TeamHistories', null, {}),
             queryInterface.bulkDelete('BanHistories', null, {}),
             queryInterface.bulkDelete('SummonerHistories', null, {})
