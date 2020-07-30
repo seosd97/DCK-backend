@@ -16,7 +16,7 @@ module.exports = (sequelize, DataTypes) => {
     TeamHistory.associate = function(models) {
         TeamHistory.hasMany(models.BanHistory);
         TeamHistory.belongsTo(models.Team, {
-            onDelete: 'CASCADE',
+            onDelete: 'SETNULL',
             foreignKey: {
                 allowNull: false
             }

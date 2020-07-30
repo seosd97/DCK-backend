@@ -1,4 +1,5 @@
-const { Match, Team, Summoner, BanHistory } = require('../../models');
+const { Match, Team, Summoner, TeamHistory, SummonerHistory, BanHistory } = require('../../models');
+const match = require('../../models/match');
 
 exports.getAllMatches = async (req, res) => {
     const matches = await Match.findAll({
@@ -15,12 +16,14 @@ exports.getMatchById = async (req, res) => {
     const matchData = await Match.findOne({
         where: {
             id: matchId
-        }
+        },
+        attributes: {
+            exclude: ['createdAt', 'updatedAt']
+        },
+        raw: true
     });
 
-    const payload = await makeMatchData(matchData);
-
-    res.json(payload);
+    res.json(matchData);
 };
 
 exports.getMatchByGameId = async (req, res) => {
@@ -28,12 +31,14 @@ exports.getMatchByGameId = async (req, res) => {
     const matchData = await Match.findOne({
         where: {
             game_id: matchId
-        }
+        },
+        attributes: {
+            exclude: ['createdAt', 'updatedAt']
+        },
+        raw: true
     });
 
-    const payload = await makeMatchData(matchData);
-
-    res.json(payload);
+    res.json(matchData);
 };
 
 exports.getMatchesByType = async (req, res) => {
@@ -49,6 +54,49 @@ exports.getMatchesByType = async (req, res) => {
     });
 
     res.json(matchDatas);
+};
+
+exports.getMatchDetail = async (req, res) => {};
+
+exports.getMatchDetailByGameId = async (req, res) => {
+    try {
+        const matchData = await Match.findOne({
+            where: {
+                game_id: req.params.game_id
+            },
+            attributes: {
+                exclude: ['createdAt', 'updatedAt']
+            },
+            include: [
+                {
+                    model: TeamHistory,
+                    // as: 'teams',
+                    attributes: {
+                        exclude: ['createdAt', 'updatedAt']
+                    },
+                    include: {
+                        model: BanHistory,
+                        // as: 'bans',
+                        attributes: {
+                            exclude: ['createdAt', 'updatedAt']
+                        }
+                    }
+                },
+                {
+                    model: SummonerHistory,
+                    // as: 'summoner_stats',
+                    attributes: {
+                        exclude: ['createdAt', 'updatedAt']
+                    }
+                }
+            ]
+        });
+
+        res.json(matchData.toJSON());
+    } catch (err) {
+        console.log(err);
+        res.json({ err });
+    }
 };
 
 exports.getMatchBySummoner = async (req, res) => {
@@ -92,26 +140,31 @@ exports.getMatchBySummoner = async (req, res) => {
 };
 
 exports.getMatchesByTournamentId = async (req, res) => {
-    // const matches = await Match.findAll({
-    //     where: {
-    //     }
-    // })
+    const matches = await Match.findAll({
+        where: {
+            TournamentId: req.params.tournament_id
+        },
+        attributes: {
+            exclude: ['createdAt', 'updatedAt']
+        },
+        raw: true
+    });
+
+    res.json(matches);
 };
 
 const makeMatchData = async matchData => {
     let payload = {};
     if (matchData === null) {
         console.log('match data is null');
-        payload.error = 'invlaid match id';
+        payload.status = {
+            code: 404,
+            msg: 'invlaid match id'
+        };
         return payload;
     }
 
-    payload.id = matchData.id;
-    payload.gameType = matchData.type;
-    payload.gameId = matchData.game_id;
-    payload.duration = matchData.duration;
-    payload.round = matchData.round;
-    payload.tournamentId = matchData.TournamentId;
+    payload = matchData.toJSON();
 
     let teamDTOs = [];
     const teamDatas = await matchData.getTeamHistories({

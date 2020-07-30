@@ -23,6 +23,11 @@ module.exports = (sequelize, DataTypes) => {
             foreignKey: 'summoner_uuid',
             sourceKey: 'uuid'
         });
+
+        // Summoner.belongsToMany(models.Tournament, {
+        //     through: 'MatchParticipants',
+        //     as: 'participants'
+        // });
     };
 
     return Summoner;

@@ -21,6 +21,13 @@ module.exports = (sequelize, DataTypes) => {
                 allowNull: false
             }
         });
+
+        Match.belongsTo(models.MatchGroup, {
+            onDelete: 'CASCADE',
+            foreignKey: {
+                allowNull: false
+            }
+        });
     };
 
     return Match;

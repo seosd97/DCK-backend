@@ -16,15 +16,13 @@ module.exports = (sequelize, DataTypes) => {
         {}
     );
     Tournament.associate = function(models) {
-        Tournament.hasMany(models.Match, {
-            // foreignKey: 'tournament_code',
-            // sourceKey: 'tournament_code'
-        });
-
-        Tournament.hasMany(models.Team, {
-            // foreignKey: 'tournament_code',
-            // sourceKey: 'tournament_code'
-        });
+        Tournament.hasMany(models.MatchGroup);
+        Tournament.hasMany(models.Match);
+        Tournament.hasMany(models.Team);
+        // Tournament.belongsToMany(models.Summoner, {
+        //     through: 'MatchParticipants',
+        //     as: 'participants'
+        // });
     };
 
     return Tournament;
