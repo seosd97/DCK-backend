@@ -50,17 +50,29 @@ module.exports = (sequelize, DataTypes) => {
     );
     SummonerHistory.associate = function(models) {
         SummonerHistory.belongsTo(models.Summoner, {
-            onDelete: 'CASCADE',
-            foreignKey: { name: 'summoner_uuid', allowNull: false },
+            onDelete: 'SETNULL',
+            foreignKey: {
+                name: 'summoner_uuid',
+                allowNull: false
+            },
             sourceKey: 'uuid'
         });
 
-        SummonerHistory.belongsTo(models.Match, {
+        SummonerHistory.belongsTo(models.MatchParticipant, {
             onDelete: 'CASCADE',
             foreignKey: {
+                name: 'statId',
+                targetKey: 'id',
                 allowNull: false
             }
         });
+
+        // SummonerHistory.belongsTo(models.Match, {
+        //     onDelete: 'CASCADE',
+        //     foreignKey: {
+        //         allowNull: false
+        //     }
+        // });
     };
     return SummonerHistory;
 };

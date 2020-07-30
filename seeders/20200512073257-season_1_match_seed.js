@@ -148,7 +148,14 @@ module.exports = {
                     });
                     for (let s in participantList) {
                         const dto = participantList[s];
-                        await matchDto.createSummonerHistory({
+
+                        const participant = await matchDto.createMatchParticipant({
+                            participant_id: summoners[sidx].uuid,
+                            cid: dto.championId,
+                            team_id: dto.teamId
+                        });
+
+                        await participant.createStat({
                             summoner_uuid: summoners[sidx++].uuid,
                             cid: dto.championId,
                             spell1_id: dto.spell1Id,

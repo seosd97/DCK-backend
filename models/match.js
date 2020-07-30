@@ -14,7 +14,9 @@ module.exports = (sequelize, DataTypes) => {
     );
     Match.associate = function(models) {
         Match.hasMany(models.TeamHistory);
-        Match.hasMany(models.SummonerHistory);
+        // Match.hasMany(models.SummonerHistory);
+        Match.hasMany(models.MatchParticipant);
+
         Match.belongsTo(models.Tournament, {
             onDelete: 'CASCADE',
             foreignKey: {
