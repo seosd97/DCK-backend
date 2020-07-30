@@ -1,3 +1,5 @@
+const Sequelize = require('sequelize');
+const op = Sequelize.Op;
 const {
     MatchGroup,
     Match,
@@ -146,6 +148,22 @@ exports.getMatchesByTournamentId = async (req, res) => {
             exclude: ['createdAt', 'updatedAt']
         },
         raw: true
+    });
+
+    res.json(matches);
+};
+
+exports.getTeamMatchList = async (req, res) => {
+    const matches = await MatchGroup.findAll({
+        where: {
+            [op.or]: {
+                team1_id: req.params.team_id,
+                team2_id: req.params.team_id
+            }
+        },
+        attributes: {
+            exclude: ['id', 'createdAt', 'updatedAt']
+        }
     });
 
     res.json(matches);
