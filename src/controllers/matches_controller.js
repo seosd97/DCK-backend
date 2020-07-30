@@ -5,7 +5,8 @@ const {
     Summoner,
     TeamHistory,
     SummonerHistory,
-    BanHistory
+    BanHistory,
+    MatchParticipant
 } = require('../../models');
 const match = require('../../models/match');
 
@@ -67,7 +68,7 @@ exports.getMatchDetail = async (req, res) => {};
 exports.getMatchDetailByGameId = async (req, res) => {
     try {
         const gameId = parseInt(req.params.game_id, 10);
-        const matchData = await Match.findOne({
+        let matchData = await Match.findOne({
             where: {
                 game_id: gameId
             },
@@ -88,15 +89,47 @@ exports.getMatchDetailByGameId = async (req, res) => {
                     }
                 },
                 {
-                    model: SummonerHistory,
+                    model: MatchParticipant,
                     attributes: {
-                        exclude: ['createdAt', 'updatedAt']
+                        exclude: ['id', 'createdAt', 'updatedAt']
+                    },
+                    include: {
+                        model: SummonerHistory,
+                        as: 'stat',
+                        attributes: {
+                            exclude: [
+                                'id',
+                                'summoner_uuid',
+                                'statId',
+                                'participantId',
+                                'createdAt',
+                                'updatedAt'
+                            ]
+                        }
                     }
                 }
             ]
         });
 
-        res.json(matchData.toJSON());
+        let summoners = [];
+        for (let i in matchData.MatchParticipants) {
+            const summoner = await Summoner.findOne({
+                where: {
+                    uuid: matchData.MatchParticipants[i].participant_id
+                },
+                attributes: {
+                    exclude: ['id', 'createdAt', 'updatedAt']
+                },
+                raw: true
+            });
+
+            summoners.push(summoner);
+        }
+
+        matchData = matchData.toJSON();
+        matchData.Summoners = summoners;
+
+        res.json(matchData);
     } catch (err) {
         console.log(err);
         res.json({ err });
@@ -119,9 +152,20 @@ exports.getMatchesByTournamentId = async (req, res) => {
 };
 
 exports.getSummonerMatchList = async (req, res) => {
-    const summoner = await Summoner.findOne({
-        where: {
-            name: req.params.name
+    const matches = await Match.findAll({
+        attributes: {
+            exclude: ['id', 'MatchGroupId', 'createdAt', 'updatedAt']
+        },
+        include: {
+            model: MatchParticipant,
+            where: {
+                participant_id: req.params.uuid
+            },
+            attributes: {
+                exclude: ['id', 'MatchId', 'createdAt', 'updatedAt']
+            }
         }
     });
+
+    res.json(matches);
 };

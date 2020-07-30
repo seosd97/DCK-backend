@@ -43,7 +43,7 @@ router.get('/matches/by_tournament/:id', ctrl_match.getMatchesByTournamentId);
 router.get('/matches/:game_id', ctrl_match.getMatchByGameId);
 router.get('/matches/detail/:game_id', ctrl_match.getMatchDetailByGameId);
 router.get('/matches/matchlist/team/:team_name');
-router.get('/matches/matchlist/summoner/:summoner_name');
+router.get('/matches/matchlist/summoner/:uuid', ctrl_match.getSummonerMatchList);
 
 // statics
 router.get('/statics/team/:name');
