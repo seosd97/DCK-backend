@@ -38,8 +38,8 @@ router.get('/tournaments', ctrl_tournament.getTournaments);
 router.get('/tournaments/:id', ctrl_tournament.getTournamentData);
 
 // match
-router.get('/matches', ctrl_match.getAllMatches);
-router.get('/matches/by_tournament/:id', ctrl_match.getMatchesByTournamentId);
+router.get('/matches', ctrl_match.getAllMatchesGroups);
+router.get('/matches/by_tournament/:tournament_id', ctrl_match.getMatchesByTournamentId);
 router.get('/matches/:game_id', ctrl_match.getMatchByGameId);
 router.get('/matches/detail/:game_id', ctrl_match.getMatchDetailByGameId);
 router.get('/matches/matchlist/team/:team_id', ctrl_match.getTeamMatchList);

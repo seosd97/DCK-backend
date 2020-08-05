@@ -47,6 +47,10 @@
         "ignoreTrailingComments": true,
         "ignoreComments": true
       }
+    ],
+    "object-curly-spacing": [
+      "warn",
+      "always"
     ]
   }
 }

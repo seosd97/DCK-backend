@@ -36,39 +36,39 @@ exports.getTournamentData = async (req, res) => {
     payload = tournament.toJSON();
 
     const matchDTOs = [];
-    const matches = await tournament.getMatches({
+    const matches = await tournament.getMatchGroups({
         attributes: {
             exclude: ['createdAt', 'updatedAt']
         }
     });
-    for (let i in matches) {
-        const TeamHistories = await matches[i].getTeamHistories({
-            attributes: {
-                exclude: ['createdAt', 'updatedAt']
-            }
-        });
+    // for (let i in matches) {
+    //     const TeamHistories = await matches[i].getTeamHistories({
+    //         attributes: {
+    //             exclude: ['createdAt', 'updatedAt']
+    //         }
+    //     });
 
-        const recordDTOs = [];
-        for (let j in TeamHistories) {
-            const team = await TeamHistories[j].getTeam({
-                attributes: {
-                    include: ['name']
-                }
-            });
+    //     const recordDTOs = [];
+    //     for (let j in TeamHistories) {
+    //         const team = await TeamHistories[j].getTeam({
+    //             attributes: {
+    //                 include: ['name']
+    //             }
+    //         });
 
-            const record = TeamHistories[j].toJSON();
-            record.teamName = team.name;
+    //         const record = TeamHistories[j].toJSON();
+    //         record.teamName = team.name;
 
-            recordDTOs.push(record);
-        }
+    //         recordDTOs.push(record);
+    //     }
 
-        const match = matches[i].toJSON();
-        match.teams = recordDTOs;
+    //     const match = matches[i].toJSON();
+    //     match.teams = recordDTOs;
 
-        matchDTOs.push(match);
-    }
+    //     matchDTOs.push(match);
+    // }
 
-    payload.matches = matchDTOs;
+    payload.matches = matches;
 
     res.json(payload);
 };

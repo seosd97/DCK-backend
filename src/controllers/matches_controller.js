@@ -1,6 +1,7 @@
 const Sequelize = require('sequelize');
 const op = Sequelize.Op;
 const {
+    Tournament,
     MatchGroup,
     Match,
     Team,
@@ -11,6 +12,32 @@ const {
     MatchParticipant
 } = require('../../models');
 const match = require('../../models/match');
+
+exports.getAllMatchesGroups = async (req, res) => {
+    const options = {
+        where: {},
+        attributes: {
+            exclude: ['id', 'createdAt', 'updatedAt']
+        }
+    };
+
+    const { filter } = req.query;
+    if (filter !== undefined) {
+        const tournament = await Tournament.findOne({
+            where: { name: filter }
+        });
+
+        if (tournament === null) {
+            res.json([]);
+            return;
+        }
+
+        options.where = { TournamentId: tournament.id };
+    }
+    const matches = await MatchGroup.findAll(options);
+
+    res.json(matches);
+};
 
 exports.getAllMatches = async (req, res) => {
     const matches = await MatchGroup.findAll({
@@ -140,7 +167,7 @@ exports.getMatchDetailByGameId = async (req, res) => {
 
 exports.getMatchesByTournamentId = async (req, res) => {
     const tournamentId = parseInt(req.params.tournament_id, 10);
-    const matches = await Match.findAll({
+    const matches = await MatchGroup.findAll({
         where: {
             TournamentId: tournamentId
         },
@@ -150,7 +177,34 @@ exports.getMatchesByTournamentId = async (req, res) => {
         raw: true
     });
 
-    res.json(matches);
+    let payload = [];
+    for (let i in matches) {
+        const match = matches[i];
+        const teams = await Team.findAll({
+            where: {
+                [op.or]: [{ id: match.team1_id }, { id: match.team2_id }]
+            },
+            attributes: {
+                exclude: ['createdAt', 'updatedAt']
+            },
+            raw: true
+        });
+
+        match.teams = teams;
+        payload.push(match);
+    }
+
+    // let teamDtos = [];
+    // const teams = await Team.findAll({
+    //     where: {
+    //         [op.or]: {
+    //             id: ,
+    //             id: req.params.team_id
+    //         }
+    //     }
+    // })
+
+    res.json(payload);
 };
 
 exports.getTeamMatchList = async (req, res) => {
