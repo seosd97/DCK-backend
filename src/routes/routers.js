@@ -38,12 +38,12 @@ router.get('/tournaments', ctrl_tournament.getTournaments);
 router.get('/tournaments/:id', ctrl_tournament.getTournamentData);
 
 // match
-router.get('/matches', ctrl_match.getAllMatchesGroups);
-router.get('/matches/by_tournament/:tournament_id', ctrl_match.getMatchesByTournamentId);
-router.get('/matches/:game_id', ctrl_match.getMatchByGameId);
-router.get('/matches/detail/:game_id', ctrl_match.getMatchDetailByGameId);
-router.get('/matches/matchlist/team/:team_id', ctrl_match.getTeamMatchList);
-router.get('/matches/matchlist/summoner/:uuid', ctrl_match.getSummonerMatchList);
+router.get('/matches', ctrl_match.getMatchesGroups);
+router.get('/matches/:game_id', ctrl_match.getMatchDetailByGameId);
+// router.get('/matches/detail/:game_id', ctrl_match.getMatchDetailByGameId);
+router.get('/matchlists/by_matchgroup/:matchgroup_id', ctrl_match.getMatchListByMatchGroup);
+router.get('/matchlists/by_team/:team_id', ctrl_match.getTeamMatchList);
+router.get('/matchlists/by_summoner/:uuid', ctrl_match.getSummonerMatchList);
 
 // statics
 router.get('/statics/team/:name');

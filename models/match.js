@@ -13,9 +13,13 @@ module.exports = (sequelize, DataTypes) => {
         {}
     );
     Match.associate = function(models) {
-        Match.hasMany(models.TeamHistory);
+        Match.hasMany(models.TeamHistory, {
+            as: 'teamStats'
+        });
         // Match.hasMany(models.SummonerHistory);
-        Match.hasMany(models.MatchParticipant);
+        Match.hasMany(models.MatchParticipant, {
+            as: 'participants'
+        });
 
         Match.belongsTo(models.Tournament, {
             onDelete: 'CASCADE',

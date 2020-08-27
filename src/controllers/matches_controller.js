@@ -13,11 +13,11 @@ const {
 } = require('../../models');
 const match = require('../../models/match');
 
-exports.getAllMatchesGroups = async (req, res) => {
+exports.getMatchesGroups = async (req, res) => {
     const options = {
         where: {},
         attributes: {
-            exclude: ['id', 'createdAt', 'updatedAt']
+            exclude: ['createdAt', 'updatedAt']
         }
     };
 
@@ -36,7 +36,31 @@ exports.getAllMatchesGroups = async (req, res) => {
     }
     const matches = await MatchGroup.findAll(options);
 
-    res.json(matches);
+    let payload = [];
+    for (let i in matches) {
+        const match = matches[i].toJSON();
+
+        const tournament = await matches[i].getTournament({
+            attributes: ['name'],
+            raw: true
+        });
+        match.tournamentName = tournament.name;
+
+        const teams = await Team.findAll({
+            where: {
+                [op.or]: [{ id: match.team1_id }, { id: match.team2_id }]
+            },
+            attributes: {
+                exclude: ['createdAt', 'updatedAt']
+            },
+            raw: true
+        });
+
+        match.teams = teams;
+        payload.push(match);
+    }
+
+    res.json(payload);
 };
 
 exports.getAllMatches = async (req, res) => {
@@ -94,6 +118,7 @@ exports.getMatchesByType = async (req, res) => {
 
 exports.getMatchDetail = async (req, res) => {};
 
+// TODO : match table과 각 스탯의 관계를 재설정 하면서 꼭 재작업 필요
 exports.getMatchDetailByGameId = async (req, res) => {
     try {
         const gameId = parseInt(req.params.game_id, 10);
@@ -107,18 +132,25 @@ exports.getMatchDetailByGameId = async (req, res) => {
             include: [
                 {
                     model: TeamHistory,
+                    as: 'teamStats',
                     attributes: {
-                        exclude: ['createdAt', 'updatedAt']
+                        exclude: ['id', 'createdAt', 'updatedAt']
                     },
-                    include: {
-                        model: BanHistory,
-                        attributes: {
-                            exclude: ['createdAt', 'updatedAt']
+                    include: [
+                        {
+                            model: BanHistory,
+                            as: 'bans',
+                            attributes: ['cid', 'turn']
+                        },
+                        {
+                            model: Team,
+                            attributes: ['name']
                         }
-                    }
+                    ]
                 },
                 {
                     model: MatchParticipant,
+                    as: 'participants',
                     attributes: {
                         exclude: ['id', 'createdAt', 'updatedAt']
                     },
@@ -140,23 +172,23 @@ exports.getMatchDetailByGameId = async (req, res) => {
             ]
         });
 
-        let summoners = [];
-        for (let i in matchData.MatchParticipants) {
-            const summoner = await Summoner.findOne({
-                where: {
-                    uuid: matchData.MatchParticipants[i].participant_id
-                },
-                attributes: {
-                    exclude: ['id', 'createdAt', 'updatedAt']
-                },
-                raw: true
-            });
+        let participantIds = [];
+        matchData.participants.forEach(p => {
+            participantIds.push({ uuid: p.participant_id });
+        });
 
-            summoners.push(summoner);
-        }
+        const summoners = await Summoner.findAll({
+            where: {
+                [op.or]: participantIds
+            },
+            attributes: {
+                exclude: ['id', 'createdAt', 'updatedAt']
+            },
+            raw: true
+        });
 
         matchData = matchData.toJSON();
-        matchData.Summoners = summoners;
+        matchData.summoners = summoners;
 
         res.json(matchData);
     } catch (err) {
@@ -165,44 +197,34 @@ exports.getMatchDetailByGameId = async (req, res) => {
     }
 };
 
-exports.getMatchesByTournamentId = async (req, res) => {
-    const tournamentId = parseInt(req.params.tournament_id, 10);
-    const matches = await MatchGroup.findAll({
+exports.getMatchListByMatchGroup = async (req, res) => {
+    let payload = {};
+    const match = await MatchGroup.findOne({
         where: {
-            TournamentId: tournamentId
+            id: req.params.matchgroup_id
+        },
+        include: {
+            model: Match,
+            attributes: {
+                exclude: ['MatchGroupId', 'createdAt', 'updatedAt']
+            }
+        },
+        attributes: {
+            exclude: ['createdAt', 'updatedAt']
+        }
+    });
+    payload = match.toJSON();
+
+    const teams = await Team.findAll({
+        where: {
+            [op.or]: [{ id: match.team1_id }, { id: match.team2_id }]
         },
         attributes: {
             exclude: ['createdAt', 'updatedAt']
         },
         raw: true
     });
-
-    let payload = [];
-    for (let i in matches) {
-        const match = matches[i];
-        const teams = await Team.findAll({
-            where: {
-                [op.or]: [{ id: match.team1_id }, { id: match.team2_id }]
-            },
-            attributes: {
-                exclude: ['createdAt', 'updatedAt']
-            },
-            raw: true
-        });
-
-        match.teams = teams;
-        payload.push(match);
-    }
-
-    // let teamDtos = [];
-    // const teams = await Team.findAll({
-    //     where: {
-    //         [op.or]: {
-    //             id: ,
-    //             id: req.params.team_id
-    //         }
-    //     }
-    // })
+    payload.Teams = teams;
 
     res.json(payload);
 };
