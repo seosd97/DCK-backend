@@ -104,13 +104,15 @@ module.exports = {
                 const blueTeam = matchData.isTeam1Blue ? team1 : team2;
                 const redTeam = !matchData.isTeam1Blue ? team1 : team2;
 
+                const gameTime = new Date(data.gameDuration * 1000);
+
                 console.log(`${matchData.type} round ${matchData.round}`);
                 for (let t in data.teams) {
                     const teamData = data.teams[t];
                     const teamDto = teamData.teamId === 100 ? blueTeam : redTeam;
 
                     console.log(teamDto.name);
-                    const teamRecord = await matchDto.createTeamHistory({
+                    const teamRecord = await matchDto.createTeamStat({
                         TeamId: teamDto.id,
                         camp_id: teamData.teamId,
                         win: teamData.win === 'Win',
@@ -133,7 +135,7 @@ module.exports = {
 
                     for (let b in teamData.bans) {
                         const banData = teamData.bans[b];
-                        const banRecord = await teamRecord.createBanHistory({
+                        const banRecord = await teamRecord.createBan({
                             cid: banData.championId,
                             turn: banData.pickTurn,
                             createdAt: new Date(),
@@ -149,11 +151,15 @@ module.exports = {
                     for (let s in participantList) {
                         const dto = participantList[s];
 
-                        const participant = await matchDto.createMatchParticipant({
+                        const participant = await matchDto.createParticipant({
                             participant_id: summoners[sidx].uuid,
                             cid: dto.championId,
                             team_id: dto.teamId
                         });
+
+                        const csPerMin =
+                            (dto.stats.totalMinionsKilled + dto.stats.neutralMinionsKilled) /
+                            gameTime.getMinutes();
 
                         await participant.createStat({
                             summoner_uuid: summoners[sidx++].uuid,
@@ -183,6 +189,7 @@ module.exports = {
                             goldEarned: dto.stats.goldEarned,
                             totalMinionsKilled: dto.stats.totalMinionsKilled,
                             neutralMinionsKilled: dto.stats.neutralMinionsKilled,
+                            totalCSPerMin: csPerMin.toFixed(1),
                             wardsPlaced: dto.stats.wardsPlaced,
                             wardsKilled: dto.stats.wardsKilled,
                             visionScore: dto.stats.visionScore,

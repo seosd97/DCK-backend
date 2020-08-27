@@ -29,7 +29,7 @@ module.exports = (sequelize, DataTypes) => {
             goldEarned: { type: DataTypes.INTEGER, defaultValue: 0 },
             totalMinionsKilled: { type: DataTypes.INTEGER, defaultValue: 0 },
             neutralMinionsKilled: { type: DataTypes.INTEGER, defaultValue: 0 },
-
+            totalCSPerMin: { type: DataTypes.FLOAT, defaultValue: 0 },
             wardsPlaced: { type: DataTypes.INTEGER, defaultValue: 0 },
             wardsKilled: { type: DataTypes.INTEGER, defaultValue: 0 },
             visionScore: { type: DataTypes.INTEGER, defaultValue: 0 },
