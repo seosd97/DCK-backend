@@ -104,8 +104,6 @@ module.exports = {
                 const blueTeam = matchData.isTeam1Blue ? team1 : team2;
                 const redTeam = !matchData.isTeam1Blue ? team1 : team2;
 
-                const gameTime = new Date(data.gameDuration * 1000);
-
                 console.log(`${matchData.type} round ${matchData.round}`);
                 for (let t in data.teams) {
                     const teamData = data.teams[t];
@@ -157,10 +155,6 @@ module.exports = {
                             team_id: dto.teamId
                         });
 
-                        const csPerMin =
-                            (dto.stats.totalMinionsKilled + dto.stats.neutralMinionsKilled) /
-                            gameTime.getMinutes();
-
                         await participant.createStat({
                             summoner_uuid: summoners[sidx++].uuid,
                             cid: dto.championId,
@@ -170,6 +164,7 @@ module.exports = {
                             death: dto.stats.deaths,
                             assist: dto.stats.assists,
                             totalDamageDealt: dto.stats.totalDamageDealtToChampions,
+                            totalDamageTaken: dto.stats.totalDamageTaken,
                             champion_level: dto.stats.champLevel,
                             role: 'NONE',
                             camp_id: dto.teamId,
@@ -189,7 +184,6 @@ module.exports = {
                             goldEarned: dto.stats.goldEarned,
                             totalMinionsKilled: dto.stats.totalMinionsKilled,
                             neutralMinionsKilled: dto.stats.neutralMinionsKilled,
-                            totalCSPerMin: csPerMin.toFixed(1),
                             wardsPlaced: dto.stats.wardsPlaced,
                             wardsKilled: dto.stats.wardsKilled,
                             visionScore: dto.stats.visionScore,
