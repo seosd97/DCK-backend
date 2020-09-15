@@ -1,4 +1,6 @@
-const { Summoner, Team } = require('../../models');
+const { Summoner, Team, SummonerHistory } = require('../../models');
+const summonerhistory = require('../../models/summonerhistory');
+const Sequelize = require('sequelize');
 
 exports.getAllSummoners = async (req, res) => {
     const datas = await Summoner.findAll({
@@ -109,4 +111,35 @@ exports.getSummonersOfTeam = async (req, res) => {
     }
 
     res.json(teamData.Summoners);
+};
+
+exports.getSummonerStat = async (req, res) => {
+    const stats = await SummonerHistory.findAll({
+        include: { model: Summoner, attributes: [] },
+        attributes: [
+            'summoner_uuid',
+            'Summoner.name',
+            'Summoner.profile_icon_id',
+            [Sequelize.fn('count', Sequelize.col('id')), 'games'],
+            [Sequelize.fn('sum', Sequelize.col('kill')), 'kills'],
+            [Sequelize.fn('sum', Sequelize.col('death')), 'deaths'],
+            [Sequelize.fn('sum', Sequelize.col('assist')), 'assists'],
+            [Sequelize.fn('sum', Sequelize.col('win')), 'wins'],
+            [Sequelize.fn('avg', Sequelize.col('visionScore')), 'visionScore'],
+            [
+                Sequelize.fn(
+                    'avg',
+                    Sequelize.literal(
+                        '(coalesce(totalMinionsKilled, 0) + coalesce(neutralMinionsKilled, 0))'
+                    )
+                ),
+                'cs'
+            ]
+        ],
+        group: 'summoner_uuid',
+        order: [[Sequelize.fn('count', Sequelize.col('id')), 'DESC']],
+        raw: true
+    });
+
+    res.json(stats);
 };

@@ -49,6 +49,8 @@ router.get('/matchlists/by_summoner/:uuid', ctrl_match.getSummonerMatchList);
 router.get('/statics/team/:name');
 router.get('/statics/summoner/:name');
 
+router.get('/ranking', ctrl_summoner.getSummonerStat);
+
 // register
 router.post('/register/tournament');
 router.post('/register/match');
