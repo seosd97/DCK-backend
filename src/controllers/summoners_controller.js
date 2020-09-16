@@ -125,6 +125,7 @@ exports.getSummonerStat = async (req, res) => {
             [Sequelize.fn('sum', Sequelize.col('death')), 'deaths'],
             [Sequelize.fn('sum', Sequelize.col('assist')), 'assists'],
             [Sequelize.fn('sum', Sequelize.col('win')), 'wins'],
+            [Sequelize.fn('sum', Sequelize.literal('case when win then 0 else 1 end')), 'defeats'],
             [Sequelize.fn('avg', Sequelize.col('visionScore')), 'visionScore'],
             [
                 Sequelize.fn(
