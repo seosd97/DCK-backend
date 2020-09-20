@@ -61,7 +61,7 @@ exports.getSummonerDataByName = async (req, res) => {
     }
 
     data.statics = await this.getSummonerMostChampion(data.uuid);
-    data.matches = await this.getSummonerMatches(data.uuid);
+    data.matchList = await this.getSummonerMatches(data.uuid);
     res.json(data);
 };
 
@@ -170,12 +170,17 @@ exports.getSummonerMostChampion = async uuid => {
             ]
         ],
         group: 'cid',
+        order: [
+            [Sequelize.fn('count', Sequelize.col('id')), 'DESC'],
+            [Sequelize.fn('sum', Sequelize.col('win')), 'DESC']
+        ],
         raw: true
     });
 
     return stat;
 };
 
+// TODO : 관령 DB구조 수정 후 쿼리 개선 필요
 exports.getSummonerMatches = async uuid => {
     const stats = await SummonerHistory.findAll({
         where: { summoner_uuid: uuid },
@@ -190,14 +195,45 @@ exports.getSummonerMatches = async uuid => {
             model: MatchParticipant,
             as: 'participants',
             attributes: { exclude: ['createdAt', 'updatedAt'] }
-        }
+        },
+        attributes: { exclude: ['createdAt', 'updatedAt'] },
+        order: [[Sequelize.col('game_creation'), 'DESC']]
     });
 
-    const result = matches.map(m => {
+    let payload = {};
+    payload.matches = matches.map(m => {
         let match = m.toJSON();
         match.stat = stats.find(s => s.match_id === m.game_id);
+
+        match.participants.map(async p => {
+            const summoner = await Summoner.findOne({
+                where: { uuid: p.participant_id },
+                attributes: ['name', 'profile_icon_id'],
+                raw: true
+            });
+
+            p.name = summoner.name;
+            p.profile_icon_id = summoner.profile_icon_id;
+            return p;
+        });
+
         return match;
     });
 
-    return result;
+    const totalStat = await SummonerHistory.findOne({
+        where: { summoner_uuid: uuid },
+        attributes: [
+            [Sequelize.fn('count', Sequelize.col('id')), 'games'],
+            [Sequelize.fn('sum', Sequelize.col('win')), 'wins'],
+            [Sequelize.fn('sum', Sequelize.literal('case when win then 0 else 1 end')), 'defeats'],
+            [Sequelize.fn('sum', Sequelize.col('kill')), 'kills'],
+            [Sequelize.fn('sum', Sequelize.col('death')), 'deaths'],
+            [Sequelize.fn('sum', Sequelize.col('assist')), 'assists']
+        ],
+        raw: true
+    });
+
+    payload.totalStat = totalStat;
+
+    return payload;
 };
