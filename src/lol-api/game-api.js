@@ -23,6 +23,22 @@ exports.getMatchDataFromAPI = async (req, res) => {
     res.json(data);
 };
 
+exports.getSummoner = uuid => {
+    return req
+        .get(endpoint + `summoner/v4/summoners/${uuid}`, {
+            headers: {
+                'X-Riot-Token': process.env.API_KEY
+            }
+        })
+        .then(res => {
+            return res;
+        })
+        .catch(err => {
+            console.log(err);
+            return { msg: err };
+        });
+};
+
 exports.getSummonerByName = name => {
     return req
         .get(endpoint + `summoner/v4/summoners/by-name/${encodeURI(name)}`, {

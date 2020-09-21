@@ -61,4 +61,7 @@ router.get('/register/match');
 router.get('/register/team');
 router.get('/register/summoner');
 
+// riot
+router.get('/riot/summoners/:uuid', ctrl_summoner.getSummonerFromAPI);
+
 module.exports = router;

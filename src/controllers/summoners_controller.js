@@ -1,6 +1,24 @@
 const { Summoner, Team, SummonerHistory, MatchParticipant, Match } = require('../../models');
 const Sequelize = require('sequelize');
-const match = require('../../models/match');
+const gameApi = require('../lol-api/game-api');
+
+exports.getSummonerFromAPI = async (req, res) => {
+    const apiRes = await gameApi.getSummoner(req.params.uuid);
+    const newSummoner = JSON.parse(apiRes);
+
+    const summoner = await Summoner.findOne({
+        where: { uuid: req.params.uuid },
+        attributes: { exclude: ['createdAt', 'updatedAt'] }
+    });
+
+    summoner.name = newSummoner.name;
+    summoner.profile_icon_id = newSummoner.profileIconId;
+    summoner.summoner_level = newSummoner.summonerLevel;
+
+    await summoner.save();
+
+    res.json(summoner);
+};
 
 exports.getAllSummoners = async (req, res) => {
     const datas = await Summoner.findAll({
@@ -16,7 +34,7 @@ exports.getAllSummoners = async (req, res) => {
 exports.getSummonerData = async (req, res) => {
     const data = await Summoner.findOne({
         where: {
-            name: req.params.id
+            uuid: req.params.id
         },
         attributes: {
             exclude: ['createdAt', 'updatedAt']
@@ -60,9 +78,10 @@ exports.getSummonerDataByName = async (req, res) => {
         return;
     }
 
-    data.statics = await this.getSummonerMostChampion(data.uuid);
-    data.matchList = await this.getSummonerMatches(data.uuid);
-    res.json(data);
+    let payload = { summoner: data };
+    payload.statics = await this.getSummonerMostChampion(data.uuid);
+    payload.matchList = await this.getSummonerMatches(data.uuid);
+    res.json(payload);
 };
 
 exports.getSummonersOfTournament = async (req, res) => {
