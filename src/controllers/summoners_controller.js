@@ -1,7 +1,9 @@
 const { Summoner, Team, SummonerHistory, MatchParticipant, Match } = require('../../models');
 const Sequelize = require('sequelize');
 const gameApi = require('../lol-api/game-api');
+const dataApi = require('../lol-api/data-api');
 
+// NODO : 해당 함수는 값을 db에 update하긴 하지만 api에서 갱신해서 가져온다는 의미로 쓰이므로 get으로 사용
 exports.getSummonerFromAPI = async (req, res) => {
     const apiRes = await gameApi.getSummoner(req.params.uuid);
     const newSummoner = JSON.parse(apiRes);
@@ -194,6 +196,14 @@ exports.getSummonerMostChampion = async uuid => {
             [Sequelize.fn('sum', Sequelize.col('win')), 'DESC']
         ],
         raw: true
+    });
+
+    stat.map(s => {
+        const data = dataApi.getChampionData(s.cid);
+        console.log(s.cid);
+
+        s.championData = data;
+        return s;
     });
 
     return stat;
