@@ -1,7 +1,15 @@
-const { Summoner, Team, SummonerHistory, MatchParticipant, Match } = require('../../models');
+const {
+    Summoner,
+    Team,
+    SummonerHistory,
+    MatchParticipant,
+    Match,
+    sequelize
+} = require('../../models');
 const Sequelize = require('sequelize');
 const gameApi = require('../lol-api/game-api');
 const dataApi = require('../lol-api/data-api');
+const teamhistory = require('../../models/teamhistory');
 
 // NODO : 해당 함수는 값을 db에 update하긴 하지만 api에서 갱신해서 가져온다는 의미로 쓰이므로 get으로 사용
 exports.getSummonerFromAPI = async (req, res) => {
@@ -200,8 +208,6 @@ exports.getSummonerMostChampion = async uuid => {
 
     stat.map(s => {
         const data = dataApi.getChampionData(s.cid);
-        console.log(s.cid);
-
         s.championData = data;
         return s;
     });
@@ -209,42 +215,43 @@ exports.getSummonerMostChampion = async uuid => {
     return stat;
 };
 
-// TODO : 관령 DB구조 수정 후 쿼리 개선 필요
+// TODO : 관련 DB구조 수정 후 쿼리 개선 필요
+// NOTE : 서버 DB구조를 전체적으로 수정 예정이므로 그 이후 맞춰서 수정
 exports.getSummonerMatches = async uuid => {
-    const stats = await SummonerHistory.findAll({
-        where: { summoner_uuid: uuid },
+    const participantsIds = await MatchParticipant.findAll({
+        where: { participant_uuid: uuid },
+        attributes: ['match_id'],
+        raw: true
+    });
+    const ids1 = participantsIds.map(p => p.match_id);
+
+    const matches1 = await Match.findAll({
+        where: { id: ids1 },
         attributes: { exclude: ['createdAt', 'updatedAt'] },
         raw: true
     });
 
-    const ids = stats.map(m => m.match_id);
-    const matches = await Match.findAll({
-        where: { game_id: ids },
-        include: {
-            model: MatchParticipant,
-            as: 'participants',
-            attributes: { exclude: ['createdAt', 'updatedAt'] }
+    const stats = await SummonerHistory.findAll({
+        where: {
+            match_id: matches1.map(m => m.game_id)
         },
         attributes: { exclude: ['createdAt', 'updatedAt'] },
-        order: [[Sequelize.col('game_creation'), 'DESC']]
+        raw: true
+    });
+
+    const summoners = await Summoner.findAll({
+        where: {
+            uuid: stats.map(s => s.summoner_uuid)
+        },
+        attributes: ['uuid', 'name', 'profile_icon_id'],
+        raw: true
     });
 
     let payload = {};
-    payload.matches = matches.map(m => {
-        let match = m.toJSON();
-        match.stat = stats.find(s => s.match_id === m.game_id);
-
-        match.participants.map(async p => {
-            const summoner = await Summoner.findOne({
-                where: { uuid: p.participant_id },
-                attributes: ['name', 'profile_icon_id'],
-                raw: true
-            });
-
-            p.name = summoner.name;
-            p.profile_icon_id = summoner.profile_icon_id;
-            return p;
-        });
+    payload.matches = matches1.map(m => {
+        let match = m;
+        match.stats = stats;
+        match.participant = summoners;
 
         return match;
     });

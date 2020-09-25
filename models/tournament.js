@@ -19,10 +19,6 @@ module.exports = (sequelize, DataTypes) => {
         Tournament.hasMany(models.MatchGroup);
         Tournament.hasMany(models.Match);
         Tournament.hasMany(models.Team);
-        // Tournament.belongsToMany(models.Summoner, {
-        //     through: 'MatchParticipants',
-        //     as: 'participants'
-        // });
     };
 
     return Tournament;

@@ -44,8 +44,7 @@ module.exports = (sequelize, DataTypes) => {
             rune5: { type: DataTypes.INTEGER, defaultValue: 0 },
             statPerk0: { type: DataTypes.INTEGER, defaultValue: 0 },
             statPerk1: { type: DataTypes.INTEGER, defaultValue: 0 },
-            statPerk2: { type: DataTypes.INTEGER, defaultValue: 0 },
-            participantId: { type: DataTypes.INTEGER, defaultValue: 0 }
+            statPerk2: { type: DataTypes.INTEGER, defaultValue: 0 }
         },
         {}
     );
@@ -57,15 +56,6 @@ module.exports = (sequelize, DataTypes) => {
                 allowNull: false
             },
             sourceKey: 'uuid'
-        });
-
-        SummonerHistory.belongsTo(models.MatchParticipant, {
-            onDelete: 'CASCADE',
-            foreignKey: {
-                name: 'statId',
-                targetKey: 'id',
-                allowNull: false
-            }
         });
 
         // SummonerHistory.belongsTo(models.Match, {

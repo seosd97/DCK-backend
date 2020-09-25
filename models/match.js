@@ -16,9 +16,20 @@ module.exports = (sequelize, DataTypes) => {
         Match.hasMany(models.TeamHistory, {
             as: 'teamStats'
         });
-        // Match.hasMany(models.SummonerHistory);
+
+        // Match.hasMany(models.SummonerHistory, {
+        //     as: 'participant_stat',
+        //     foreignKey: 'match_id'
+        // });
+
+        // Match.blongsToMant(models.Summoner, {
+        //     as: 'participants',
+        //     through: 'MatchParticipants'
+        // });
+
         Match.hasMany(models.MatchParticipant, {
-            as: 'participants'
+            as: 'participants',
+            foreignKey: 'match_id'
         });
 
         Match.belongsTo(models.Tournament, {

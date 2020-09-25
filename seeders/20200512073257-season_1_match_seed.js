@@ -1,6 +1,6 @@
 'use strict';
 const game_api = require('../src/lol-api/game-api');
-const { Tournament, Team, Summoner, MatchGroup, Match } = require('../models');
+const { Tournament, Team, Summoner, MatchGroup, Match, MatchParticipant } = require('../models');
 
 const matchGroups = [
     {
@@ -133,7 +133,7 @@ module.exports = {
 
                     for (let b in teamData.bans) {
                         const banData = teamData.bans[b];
-                        const banRecord = await teamRecord.createBan({
+                        await teamRecord.createBan({
                             cid: banData.championId,
                             turn: banData.pickTurn,
                             createdAt: new Date(),
@@ -149,14 +149,15 @@ module.exports = {
                     for (let s in participantList) {
                         const dto = participantList[s];
 
-                        const participant = await matchDto.createParticipant({
-                            participant_id: summoners[sidx].uuid,
+                        await MatchParticipant.create({
+                            participant_uuid: summoners[s].uuid,
+                            match_id: matchDto.id,
                             cid: dto.championId,
                             team_id: dto.teamId
                         });
 
-                        await participant.createStat({
-                            summoner_uuid: summoners[sidx++].uuid,
+                        await summoners[s].createStat({
+                            summoner_uuid: summoners[s].uuid,
                             cid: dto.championId,
                             spell1_id: dto.spell1Id,
                             spell2_id: dto.spell2Id,
@@ -199,7 +200,6 @@ module.exports = {
                             statPerk0: dto.stats.statPerk0,
                             statPerk1: dto.stats.statPerk1,
                             statPerk2: dto.stats.statPerk2,
-                            participantId: dto.participantId,
                             createdAt: new Date(),
                             updatedAt: new Date()
                         });

@@ -14,6 +14,7 @@ module.exports = (sequelize, DataTypes) => {
     );
     Summoner.associate = function(models) {
         Summoner.hasMany(models.SummonerHistory, {
+            as: 'stats',
             foreignKey: 'summoner_uuid',
             sourceKey: 'uuid'
         });
@@ -23,11 +24,6 @@ module.exports = (sequelize, DataTypes) => {
             foreignKey: 'summoner_uuid',
             sourceKey: 'uuid'
         });
-
-        // Summoner.belongsToMany(models.Tournament, {
-        //     through: 'MatchParticipants',
-        //     as: 'participants'
-        // });
     };
 
     return Summoner;

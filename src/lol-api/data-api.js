@@ -38,7 +38,6 @@ exports.cacheData = async () => {
 exports.getChampionData = id => {
     for (let i in championList) {
         if (championList[i].key === `${id}`) {
-            console.log(championList[i]);
             return championList[i];
         }
     }
