@@ -225,13 +225,14 @@ exports.getSummonerMatches = async uuid => {
     });
     const ids1 = participantsIds.map(p => p.match_id);
 
-    const matches1 = await Match.findAll({
+    const matches = await Match.findAll({
         where: { id: ids1 },
         attributes: { exclude: ['createdAt', 'updatedAt'] },
+        order: [['game_creation', 'DESC']],
         raw: true
     });
 
-    const mIds = matches1.map(m => m.game_id);
+    const mIds = matches.map(m => m.game_id);
     const stats = await SummonerHistory.findAll({
         where: {
             match_id: mIds
@@ -250,7 +251,7 @@ exports.getSummonerMatches = async uuid => {
     });
 
     let payload = {};
-    payload.matches = matches1.map(m => {
+    payload.matches = matches.map(m => {
         let match = m;
         const statElems = stats.filter(s => {
             return s.match_id === m.game_id;
