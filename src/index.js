@@ -21,7 +21,7 @@ const init = async () => {
             process.exit();
         });
 
-    if (await !dataApi.cacheData()) {
+    if (await !dataApi.preloadData()) {
         console.log('failed to cache data');
         process.exit();
     }

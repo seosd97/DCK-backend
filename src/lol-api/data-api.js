@@ -15,7 +15,7 @@ let gameVersion = null;
 exports.championsList = championList;
 exports.gameVersion = gameVersion;
 
-exports.cacheData = async () => {
+exports.preloadData = async () => {
     const version = await req.get('https://ddragon.leagueoflegends.com/api/versions.json');
     if (version == null) {
         console.log('failed to load game version');
