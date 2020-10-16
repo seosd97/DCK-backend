@@ -149,6 +149,7 @@ module.exports = {
                     for (let s in participantList) {
                         const dto = participantList[s];
 
+                        console.log(summoners[s].uuid);
                         await MatchParticipant.create({
                             participant_uuid: summoners[s].uuid,
                             match_id: matchDto.id,
