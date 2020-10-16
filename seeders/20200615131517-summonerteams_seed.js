@@ -145,7 +145,7 @@ module.exports = {
                 const summoner = data.summoners[j];
                 const summonerData = await Summoner.findOne({
                     where: {
-                        name: summoner
+                        uuid: summoner
                     }
                 });
 
