@@ -123,7 +123,6 @@ module.exports = {
                         updatedAt: new Date()
                     });
 
-                    console.log('team record');
                     if (teamData.win === 'Win') {
                         await matchGroup.increment(
                             teamDto.name === matchGroupData.team1
@@ -141,7 +140,6 @@ module.exports = {
                             updatedAt: new Date()
                         });
                     }
-                    console.log('ban');
 
                     let sidx = 0;
                     const summoners = await teamDto.getSummoners();
