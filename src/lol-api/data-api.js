@@ -12,7 +12,6 @@ const riotReq = req.defaults({
 let championList = null;
 let gameVersion = null;
 
-exports.championsList = championList;
 exports.gameVersion = gameVersion;
 
 exports.preloadData = async () => {
