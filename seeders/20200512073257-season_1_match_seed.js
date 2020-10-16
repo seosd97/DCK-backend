@@ -123,6 +123,7 @@ module.exports = {
                         updatedAt: new Date()
                     });
 
+                    console.log('team record');
                     if (teamData.win === 'Win') {
                         await matchGroup.increment(
                             teamDto.name === matchGroupData.team1
@@ -140,6 +141,7 @@ module.exports = {
                             updatedAt: new Date()
                         });
                     }
+                    console.log('ban');
 
                     let sidx = 0;
                     const summoners = await teamDto.getSummoners();
@@ -149,7 +151,7 @@ module.exports = {
                     for (let s in participantList) {
                         const dto = participantList[s];
 
-                        console.log(summoners[s].uuid);
+                        console.log(summoners[s].name);
                         await MatchParticipant.create({
                             participant_uuid: summoners[s].uuid,
                             match_id: matchDto.id,
