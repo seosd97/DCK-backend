@@ -44,7 +44,7 @@ const option =
 
 option
     ? https.createServer(option, app).listen(port, () => {
-        console.log(`http server on port ${port}`);
+        console.log(`https server on port ${port}`);
     })
     : http.createServer(app).listen(port, () => {
         console.log(`http server on port ${port}`);
